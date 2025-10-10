@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sebehodnocení – návrh rozhraní (škála 0–1000%)</title>
+  <title>Sebehodnocení – návrh rozhraní (škála 0–100%)</title>
   <style>
     :root {
       --bg:#f7f7fb; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e2e8f0; --accent:#2563eb;
@@ -49,7 +49,7 @@
 <body>
   <header class="page">
     <h1>Sebehodnocení – varianta se škálou</h1>
-    <p>Statický <strong>design</strong> obrazovky s posuvníkem <em>0–1000&nbsp;%</em> za každým výstupem. Levý konec značí „(ještě) nezvládám“, pravý „úplně zvládám“.</p>
+    <p>Statický <strong>design</strong> obrazovky s posuvníkem <em>0–100&nbsp;%</em> za každým výstupem. Levý konec značí „(ještě) nezvládám“, pravý „úplně zvládám“.</p>
   </header>
 
   <main>
@@ -59,15 +59,15 @@
       <p class="sub">Semestr 1 • Výstupy k sebehodnocení</p>
       <div class="explain" id="s1-explain">
         <strong>Co znamená škála?</strong>
-        Posuň hodnotu podle míry zvládnutí daného výstupu v tomto semestru: <em>0&nbsp;% = (ještě) nezvládám</em>, <em>1000&nbsp;% = úplně zvládám</em>.
+        Posuň hodnotu podle míry zvládnutí daného výstupu v tomto semestru: <em>0&nbsp;% = (ještě) nezvládám</em>, <em>100&nbsp;% = úplně zvládám</em>.
       </div>
       <ul class="outputs" role="list">
         <li>
           <div class="row">
             <div class="output-text">Porovnám tradiční a současné přístupy ke vzdělávání učitelů a uvedu příklady</div>
             <div class="scale">
-              <input type="range" min="0" max="1000" step="10" value="0" id="s1-o1" aria-label="Míra zvládnutí 0–1000 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>1000&nbsp;% • úplně zvládám</span></div>
+              <input type="range" min="0" max="10" step="10" value="0" id="s1-o1" aria-label="Míra zvládnutí 0–100 %">
+              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
             </div>
           </div>
         </li>
@@ -75,8 +75,8 @@
           <div class="row">
             <div class="output-text">Ověřím si své znalosti formou kvízu zaměřeného na školskou legislativu</div>
             <div class="scale">
-              <input type="range" min="0" max="1000" step="10" value="0" id="s1-o2" aria-label="Míra zvládnutí 0–1000 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>1000&nbsp;% • úplně zvládám</span></div>
+              <input type="range" min="0" max="100" step="10" value="0" id="s1-o2" aria-label="Míra zvládnutí 0–100 %">
+              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
             </div>
           </div>
         </li>
@@ -84,8 +84,8 @@
           <div class="row">
             <div class="output-text">Vypracuji volnou úvahu o ideálním učiteli /učitelce a pojmenuji jaké kompetence považuji v pedagogické profesi za klíčové</div>
             <div class="scale">
-              <input type="range" min="0" max="1000" step="10" value="0" id="s1-o3" aria-label="Míra zvládnutí 0–1000 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>1000&nbsp;% • úplně zvládám</span></div>
+              <input type="range" min="0" max="100" step="10" value="0" id="s1-o3" aria-label="Míra zvládnutí 0–100 %">
+              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
             </div>
           </div>
         </li>
@@ -93,8 +93,8 @@
           <div class="row">
             <div class="output-text">Uvedu konkrétní příklady jak naplňuji jednotlivé oblasti profesních kompetencí</div>
             <div class="scale">
-              <input type="range" min="0" max="1000" step="10" value="0" id="s1-o4" aria-label="Míra zvládnutí 0–1000 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>1000&nbsp;% • úplně zvládám</span></div>
+              <input type="range" min="0" max="100" step="10" value="0" id="s1-o4" aria-label="Míra zvládnutí 0–100 %">
+              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
             </div>
           </div>
         </li>
@@ -111,15 +111,15 @@
       <p class="sub">Semestr 2 • Výstupy k sebehodnocení</p>
       <div class="explain" id="s2-explain">
         <strong>Co znamená škála?</strong>
-        Posuň hodnotu podle míry zvládnutí daného výstupu v tomto semestru: <em>0&nbsp;% = (ještě) nezvládám</em>, <em>1000&nbsp;% = úplně zvládám</em>.
+        Posuň hodnotu podle míry zvládnutí daného výstupu v tomto semestru: <em>0&nbsp;% = (ještě) nezvládám</em>, <em>100&nbsp;% = úplně zvládám</em>.
       </div>
       <ul class="outputs" role="list">
         <li>
           <div class="row">
             <div class="output-text">Student vysvětlí základní psychologické procesy a jejich vliv na učení žáků</div>
             <div class="scale">
-              <input type="range" min="0" max="1000" step="10" value="0" id="s2-o1" aria-label="Míra zvládnutí 0–1000 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>1000&nbsp;% • úplně zvládám</span></div>
+              <input type="range" min="0" max="100" step="10" value="0" id="s2-o1" aria-label="Míra zvládnutí 0–100 %">
+              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
             </div>
           </div>
         </li>
@@ -127,8 +127,8 @@
           <div class="row">
             <div class="output-text">Student vytváří bezpečné a podpůrné prostředí pro učení</div>
             <div class="scale">
-              <input type="range" min="0" max="1000" step="10" value="0" id="s2-o2" aria-label="Míra zvládnutí 0–1000 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>1000&nbsp;% • úplně zvládám</span></div>
+              <input type="range" min="0" max="100" step="10" value="0" id="s2-o2" aria-label="Míra zvládnutí 0–100 %">
+              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
             </div>
           </div>
         </li>
@@ -136,8 +136,8 @@
           <div class="row">
             <div class="output-text">Student reflektuje vliv sociálních faktorů na učení a skupinovou dynamiku</div>
             <div class="scale">
-              <input type="range" min="0" max="1000" step="10" value="0" id="s2-o3" aria-label="Míra zvládnutí 0–1000 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>1000&nbsp;% • úplně zvládám</span></div>
+              <input type="range" min="0" max="100" step="10" value="0" id="s2-o3" aria-label="Míra zvládnutí 0–100 %">
+              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
             </div>
           </div>
         </li>
@@ -145,8 +145,8 @@
           <div class="row">
             <div class="output-text">Jádrový výstup: Dokážu propojit poznatky o vnímání, paměti, pozornosti a emocích s konkrétními výukovými situacemi</div>
             <div class="scale">
-              <input type="range" min="0" max="1000" step="10" value="0" id="s2-o4" aria-label="Míra zvládnutí 0–1000 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>1000&nbsp;% • úplně zvládám</span></div>
+              <input type="range" min="0" max="100" step="10" value="0" id="s2-o4" aria-label="Míra zvládnutí 0–100 %">
+              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
             </div>
           </div>
         </li>
