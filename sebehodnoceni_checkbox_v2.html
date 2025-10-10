@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sebehodnocení – checkbox za výstupem (design) + přílohy</title>
+  <style>
+    :root {
+      --bg:#f7f7fb; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e2e8f0; --accent:#2563eb;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--text); background:var(--bg); line-height:1.5; }
+    header.page { max-width:860px; margin:32px auto 16px; padding:0 16px; }
+    header.page h1 { margin:0 0 6px; font-weight:800; letter-spacing:-.02em; }
+    header.page p { margin:4px 0; color:var(--muted); }
+    main { max-width:860px; margin:0 auto 80px; padding:0 16px; display:grid; gap:16px; }
+    .card { border:1px solid var(--line); background:var(--card); border-radius:12px; padding:18px; }
+    .subject h2 { margin:0 0 4px; font-size:1.15rem; letter-spacing:-.01em; }
+    .subject .sub { color:var(--muted); font-size:.95rem; margin:0 0 10px; }
+    .explain { border:1px dashed var(--line); border-radius:10px; padding:8px 10px; background:#fbfdff; color:var(--muted); font-size:.95rem; margin:8px 0 12px; }
+    .outputs { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+    .outputs li { border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:#fff; }
+    /* Layout: text vlevo, checkbox vpravo (za textem) */
+    .outputs label {
+      display:grid;
+      grid-template-columns: 1fr auto;
+      align-items:start;
+      gap:12px;
+      cursor:pointer;
+    }
+    .outputs input[type="checkbox"] { margin-top:.1rem; accent-color:var(--accent); transform:scale(1.05); }
+    .reflexe { margin-top:14px; display:grid; gap:6px; }
+    .reflexe label { font-weight:600; }
+    .reflexe textarea { width:100%; min-height:110px; resize:vertical; padding:.7rem .8rem; border:1px solid var(--line); border-radius:10px; font:inherit; }
+    /* Attachments */
+    .attach { margin-top:8px; display:grid; gap:6px; }
+    .attach label { font-weight:600; }
+    .attach input[type="file"] { font:inherit; }
+    .hint { color:var(--muted); font-size:.95rem; margin:0; }
+    footer.page { max-width:860px; margin:20px auto 48px; padding:0 16px; color:var(--muted); font-size:.95rem; }
+    @media print { body { background:#fff; } .card { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+  <header class="page">
+    <h1>Sebehodnocení – varianta s checkboxem za výstupem</h1>
+    <p>Statický <strong>design</strong> obrazovky. U každého výstupu je <strong>text vlevo</strong> a <strong>checkbox vpravo (za textem)</strong>. Pod seznamem je volitelná reflexe.</p>
+  </header>
+
+  <main>
+    <!-- PŘEDMĚT 1: Základy pedagogického myšlení (v6) -->
+    <section class="card subject" aria-labelledby="s1-title" aria-describedby="s1-explain">
+      <h2 id="s1-title">Základy pedagogického myšlení</h2>
+      <p class="sub">Semestr 1 • Výstupy k sebehodnocení</p>
+      <div class="explain" id="s1-explain">
+        <strong>Co znamená zaškrtnutí?</strong>
+        Zaškrtnutím potvrzuji, že jsem se danému výstupu <em>věnoval/a v průběhu tohoto semestru</em>. Nehodnotím kvalitu, pouze deklaruji práci.
+      </div>
+      <ul class="outputs" role="list">
+        <li><label for="s1-o1">Porovnám tradiční a současné přístupy ke vzdělávání učitelů a uvedu příklady <input type="checkbox" id="s1-o1" aria-describedby="s1-explain"></label></li>
+        <li><label for="s1-o2">Ověřím si své znalosti formou kvízu zaměřeného na školskou legislativu <input type="checkbox" id="s1-o2" aria-describedby="s1-explain"></label></li>
+        <li><label for="s1-o3">Vypracuji volnou úvahu o ideálním učiteli /učitelce a pojmenuji jaké kompetence považuji v pedagogické profesi za klíčové <input type="checkbox" id="s1-o3" aria-describedby="s1-explain"></label></li>
+        <li><label for="s1-o4">Uvedu konkrétní příklady jak naplňuji jednotlivé oblasti profesních kompetencí <input type="checkbox" id="s1-o4" aria-describedby="s1-explain"></label></li>
+      </ul>
+      <div class="reflexe">
+        <label for="s1-r">Stručně zdůvodni, jak jsi pracoval(a) na těchto výstupech <span aria-hidden="true">(volitelné)</span></label>
+        <textarea id="s1-r" placeholder="Např. Jaké aktivity, úkoly nebo praxe k naplnění výstupů pomohly? Co bys příště udělal/a jinak?"></textarea>
+        <div class="attach">
+          <label for="s1-file">Přiložit podklady <span aria-hidden="true">(volitelné)</span></label>
+          <input type="file" id="s1-file" aria-describedby="s1-file-desc">
+          <p class="hint" id="s1-file-desc">Možnost přiložit podklady k výstupům pro portfolio.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PŘEDMĚT 2: Úvod do kognitivní a sociální psychologie (v6) -->
+    <section class="card subject" aria-labelledby="s2-title" aria-describedby="s2-explain">
+      <h2 id="s2-title">Úvod do kognitivní a sociální psychologie</h2>
+      <p class="sub">Semestr 2 • Výstupy k sebehodnocení</p>
+      <div class="explain" id="s2-explain">
+        <strong>Co znamená zaškrtnutí?</strong>
+        Zaškrtnutím potvrzuji, že jsem se danému výstupu <em>věnoval/a v průběhu tohoto semestru</em>. Nehodnotím kvalitu, pouze deklaruji práci.
+      </div>
+      <ul class="outputs" role="list">
+        <li><label for="s2-o1">Student vysvětlí základní psychologické procesy a jejich vliv na učení žáků <input type="checkbox" id="s2-o1" aria-describedby="s2-explain"></label></li>
+        <li><label for="s2-o2">Student vytváří bezpečné a podpůrné prostředí pro učení <input type="checkbox" id="s2-o2" aria-describedby="s2-explain"></label></li>
+        <li><label for="s2-o3">Student reflektuje vliv sociálních faktorů na učení a skupinovou dynamiku <input type="checkbox" id="s2-o3" aria-describedby="s2-explain"></label></li>
+        <li><label for="s2-o4">Jádrový výstup: Dokážu propojit poznatky o vnímání, paměti, pozornosti a emocích s konkrétními výukovými situacemi <input type="checkbox" id="s2-o4" aria-describedby="s2-explain"></label></li>
+      </ul>
+      <div class="reflexe">
+        <label for="s2-r">Stručně zdůvodni, jak jsi pracoval(a) na těchto výstupech <span aria-hidden="true">(volitelné)</span></label>
+        <textarea id="s2-r" placeholder="Např. Jaké aktivity, úkoly nebo praxe k naplnění výstupů pomohly? Co bys příště udělal/a jinak?"></textarea>
+        <div class="attach">
+          <label for="s2-file">Přiložit podklady <span aria-hidden="true">(volitelné)</span></label>
+          <input type="file" id="s2-file" aria-describedby="s2-file-desc">
+          <p class="hint" id="s2-file-desc">Možnost přiložit podklady k výstupům pro portfolio.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page">
+    <p>Ukázka vzhledu (bez ukládání a logiky). Checkbox je vizuálně až za textem výstupu.</p>
+  </footer>
+</body>
+</html>
