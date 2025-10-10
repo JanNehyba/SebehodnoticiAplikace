@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SKPKS – Sebehodnocení kompetencí (v2)</title>
+<style>
+  :root{
+    --muni-blue:#0044cc;
+    --muni-blue-700:#0037a6;
+    --area1:#ffb000;
+    --area2:#6bbf59;
+    --area3:#ff6a00;
+    --area4:#d3b58f;
+    --area5:#8aa0b8;
+    --bg:#f7f7fb;
+    --text:#1d2433;
+    --muted:#6b7280;
+    --card:#ffffff;
+    --border:#e5e7eb;
+    --chip:#eef2ff;
+  }
+  html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+  header{
+    background:linear-gradient(120deg,var(--muni-blue),var(--muni-blue-700));
+    color:#fff;padding:20px 16px;
+  }
+  header h1{margin:0;font-size:clamp(20px,2.2vw,28px);letter-spacing:.3px}
+  header p{margin:.35rem 0 0;opacity:.95;max-width:1100px}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
+  .tab-btn{
+    border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;
+    cursor:pointer;font-weight:600;transition:.15s;box-shadow:0 1px 2px rgba(11,14,22,.05)
+  }
+  .tab-btn[aria-selected="true"]{background:var(--muni-blue);color:#fff;border-color:transparent}
+  .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0 16px}
+  .toolbar .chip{background:var(--chip);color:#2b2f3a;border-radius:999px;padding:6px 10px;font-size:13px}
+  .toolbar label.switch{display:inline-flex;gap:8px;align-items:center;font-weight:600}
+  .toolbar input[type="checkbox"]{transform:scale(1.2)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr)); gap:12px}
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 12px 12px;
+    box-shadow:0 2px 6px rgba(15,18,28,.04);display:flex;flex-direction:column;gap:10px;
+  }
+  .card h3{margin:0;font-size:16px}
+  .badge{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;border-radius:6px;padding:3px 8px;display:inline-block}
+  .a1{background:var(--area1);color:#231c00}.a2{background:var(--area2);color:#052a0b}.a3{background:var(--area3);color:#2a0b00}
+  .a4{background:var(--area4);color:#2a1500}.a5{background:var(--area5);color:#001428}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .muted{color:var(--muted);font-size:13px}
+  .scale{display:flex;align-items:center;gap:8px}
+  .scale input[type="range"]{width:220px}
+  .pill{border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px}
+  .anchors{background:#fafafa;border:1px dashed var(--border);padding:10px;border-radius:10px;font-size:13px;display:none}
+  .anchors ul{margin:6px 0 0 16px;padding:0}
+  .anchors li{margin:4px 0}
+  .kpi{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 2px}
+  .kpi .box{background:#fff;border:1px solid var(--border);padding:10px;border-radius:10px;min-width:140px}
+  .kpi .box b{display:block;font-size:22px}
+  .table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .table th,.table td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px;vertical-align:middle}
+  .flex{display:flex;gap:8px;align-items:center}
+  .spark{display:block;width:120px;height:36px}
+  .area-divider{margin:6px 0 12px;border-top:0;height:12px}
+  .a1hr{background:linear-gradient(90deg,var(--area1),transparent)} .a2hr{background:linear-gradient(90deg,var(--area2),transparent)}
+  .a3hr{background:linear-gradient(90deg,var(--area3),transparent)} .a4hr{background:linear-gradient(90deg,var(--area4),transparent)}
+  .a5hr{background:linear-gradient(90deg,var(--area5),transparent)}
+  .note{width:100%;min-height:72px;border:1px solid var(--border);border-radius:10px;padding:8px;font-size:14px;background:#fff}
+  .help{font-size:12px;color:#374151;background:#f3f4f6;border:1px solid var(--border);padding:8px;border-radius:8px}
+  .files{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .file-thumb{border:1px solid var(--border);border-radius:8px;padding:6px;background:#fff;font-size:12px}
+  .file-thumb img{display:block;max-width:140px;max-height:90px}
+  .scoreLabel{font-weight:600}
+  footer{margin:24px 0 60px;color:var(--muted)}
+  .small{font-size:12px}
+  .sticky-summary{position:sticky;top:0;z-index:33;background:var(--bg);padding:6px 0 10px}
+  .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:600}
+  .danger{background:#fee; border-color:#fca5a5}
+  .success{background:#eefcf3; border-color:#bbf7d0}
+  @media print{
+    header,.tabs,.toolbar,.pill,.scale label,input[type="range"],.help,.file-input{display:none !important}
+    .anchors{display:block !important}
+    .tab-panel{display:block !important}
+    body{background:#fff}
+    .card{break-inside:avoid}
+    .scoreLabel{display:inline-block !important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>SKPKS – Sebehodnocení kompetencí studenta učitelství</h1>
+  <p>Vychází z <strong>Standardu kvality profesních kompetencí studenta učitelství (PdF MU, 2020)</strong>.
+     Hodnotí se na škále <strong>0–3</strong>. Nové slovní kotvy vycházejí z rozšířené verze standardu a literatury k formativnímu hodnocení.</p>
+</header>
+
+<div class="wrap">
+  <div class="sticky-summary">
+    <div class="tabs" role="tablist" aria-label="Semestry">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="s2">2. semestr</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="s3">3. semestr</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="s4">4. semestr</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="s5">5. semestr</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="s6">6. semestr</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="vyvoj">Vývoj &amp; přehled</button>
+    </div>
+    <div class="toolbar">
+      <span class="chip">Škála: 0 = chybějící • 1 = utvářející se • 2 = rozvíjející se • 3 = pokročilé</span>
+      <label class="switch"><input id="toggleAnchors" type="checkbox" /> Zobrazit slovní kotvy</label>
+      <button id="pdfBtn" class="btn">Export do PDF</button>
+    </div>
+    <div class="help">
+      <strong>Jak psát zdůvodnění skóre:</strong> stručně uveďte (1) <em>co jsem dělal(a)</em> (konkrétní postup/příklad),
+      (2) <em>důkaz</em> (odkaz na přípravu, pracovní list, výstupy žáků, hospitační záznam),
+      (3) <em>dopad na učení žáků</em> (čeho si všímám, čím to dokládám),
+      (4) <em>další krok</em> (co změním příště). Přílohy můžete přiložit níže.
+    </div>
+  </div>
+
+  <section id="s2" class="tab-panel"></section>
+  <section id="s3" class="tab-panel" hidden></section>
+  <section id="s4" class="tab-panel" hidden></section>
+  <section id="s5" class="tab-panel" hidden></section>
+  <section id="s6" class="tab-panel" hidden></section>
+
+  <section id="vyvoj" class="tab-panel" hidden>
+    <h2>Přehled vývoje napříč semestry</h2>
+    <div class="kpi" id="kpis"></div>
+    <!-- Odstraněno: celkový graf průměrů -->
+    <h3>Trajektorie jednotlivých kompetencí</h3>
+    <table class="table" id="trajTable">
+      <thead><tr>
+        <th>Kód</th><th>Kompetence</th><th>Oblast</th>
+        <th>2.</th><th>3.</th><th>4.</th><th>5.</th><th>6.</th>
+        <th>Trend</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <footer class="small">
+    <p><strong>Zdroje:</strong> Rozšířená a stručná verze SKPKS (PdF MU, 2020) – indikátory úrovní 0–3; rámce formativního hodnocení (Tomková aj., 2012; Spilková &amp; Tomková, 2010).
+    </p>
+  </footer>
+</div>
+
+<script>
+/** ====== Datový model: oblasti, kritéria ====== */
+const AREAS = {
+  1: {label:"1 Plánování výuky", color:"a1"},
+  2: {label:"2 Podmínky pro učení", color:"a2"},
+  3: {label:"3 Podpora učení", color:"a3"},
+  4: {label:"4 Zpětná vazba a hodnocení", color:"a4"},
+  5: {label:"5 Reflexe výuky", color:"a5"}
+};
+
+// Základní (vylepšené) slovní kotvy platné napříč kompetencemi – pro orientaci
+const GLOBAL_ANCHORS = [
+  "0 – Důkazy o kompetenci chybí nebo jsou v rozporu se Standardem; jednání je převážně neefektivní.",
+  "1 – Kompetence se utváří: postupy se objevují spíše nahodile, s výraznou oporou druhých; dopad na učení je omezený.",
+  "2 – Kompetence se rozvíjí: postupy volím záměrně a přiměřeně, včetně reakcí na situaci; dopad na učení je zpravidla patrný.",
+  "3 – Kompetence je pokročilá: volím a zdůvodňuji postupy samostatně, cíleně diferencuji a systematicky sleduji dopad na učení."
+];
+
+// 26 kritérií + nové kotvy (parafráze rozšířené verze SKPKS)
+const CRITS = [
+  {id:"1a", area:1, name:"Konzultace s provázejícím (návaznost na ŠVP)", text:"Konzultuji přípravu ve vazbě na ŠVP/tematický plán a předchozí práci učitele a žáků.",
+    anchors:[
+      "Přípravu nekonzultuji; vazby na ŠVP/tematický plán neřeším, připomínky nereflektuji.",
+      "Hotovou přípravu občas ukážu, připomínky spíše nezapracovávám; vazby na ŠVP jsou nejasné.",
+      "Přípravu konzultuji v průběhu plánování; připomínky zapracovávám ve vazbě na ŠVP a předchozí výuku.",
+      "Konzultuji cíleně a samostatně upravuji přípravu v návaznosti na ŠVP a předchozí práci; využívám podklady provázejícího."
+    ]},
+  {id:"1b", area:1, name:"Individualizace a diferenciace", text:"Zohledňuji při plánování možnosti konkrétních žáků (SVP/IVP/PLPP).",
+    anchors:[
+      "Plánuji pro všechny stejně; potřeby žáků a podpůrná opatření nezohledňuji.",
+      "Potřeby žáků znám, ale zapracování do přípravy je spíše náhodné.",
+      "Plánuji aktivity s ohledem na známé potřeby a konzultuji úpravy s provázejícím/specialisty.",
+      "Cíleně diferencuji úkoly a podporu tak, aby uspěl každý žák; spolupracuji s asistentem a SVP."
+    ]},
+  {id:"1c", area:1, name:"Cíle a jejich ověření", text:"Formuluji výukové cíle a promýšlím ověření jejich naplnění.",
+    anchors:[
+      "Cíle nejsou vymezené; neřeším, jak ověřím jejich dosažení.",
+      "Cíle formuluji rámcově; návaznost na učivo/metody a ověřování je slabá.",
+      "Cíle formuluji srozumitelně (i v různých doménách) a plánuji způsoby ověření.",
+      "Cíle přesně specifikuji a systematicky ověřuji jejich naplnění; propojuji s kritérii a sebehodnocením žáků."
+    ]},
+  {id:"1d", area:1, name:"Metody, formy, pojmy, úlohy", text:"Provádím didaktickou analýzu učiva a volím vhodné metody/organizaci.",
+    anchors:[
+      "Analýzu učiva neprovádím; metody/formy nejsou v souladu s cíli.",
+      "Analýzu dělám intuitivně; klíčové pojmy a vazby nejsou vyjasněné.",
+      "Analýzu zvládám s mírnou podporou; volím přiměřené metody a formy.",
+      "Analýzu provádím samostatně s oporou o více zdrojů; volby metod a forem zdůvodním."
+    ]},
+  {id:"1e", area:1, name:"Časové plány", text:"Zpracovávám realistický časový plán postupu ve výuce.",
+    anchors:[
+      "Časový plán nemám promyšlen; špatně odhaduji čas.",
+      "Plánuji čas s pomocí; odhad se zlepšuje, ale reakce na situaci vázne.",
+      "Plánuji samostatně a reálně; zvládám čas upravovat během hodiny.",
+      "Plánuji flexibilně včetně nenadálých situací; hodina drží rytmus i koherenci."
+    ]},
+  {id:"2a", area:2, name:"Bezpečí a klima", text:"Podporuji bezpečné a vstřícné prostředí (pozitivní atmosféru).",
+    anchors:[
+      "Jednání bezpečí nepodporuje; vznikají ohrožující situace.",
+      "Všímám si narušení bezpečí a zkouším je řešit.",
+      "Systematicky vytvářím prostředí, v němž se žáci nebojí zapojit a dělat chyby.",
+      "Cíleně pracuji s klimatem třídy a volím aktivity podle konkrétních situací."
+    ]},
+  {id:"2b", area:2, name:"Kázeň a pravidla", text:"Pracuji s pravidly a oceňuji pozitivní projevy.",
+    anchors:[
+      "S pravidly nepracuji/nejsem si jich vědom; kázeň řeším neefektivně.",
+      "Pravidla sdílím, ale důsledné dodržování se nedaří zajistit.",
+      "Pravidla uplatňuji a buduji respekt; občas narážím na potíže.",
+      "Pravidla spoluvytvářím a důsledně uplatňuji; kázeň řeším pružně a efektivně."
+    ]},
+  {id:"2c", area:2, name:"Živý kontakt a komunikace", text:"Udržuji živý kontakt (hlas, neverbální, jména) a pozornost žáků.",
+    anchors:[
+      "Kontakt nenavazuji; soustředím se spíše na obsah a sebe.",
+      "Uvědomuji si potřebu reagovat, ale kontakt je nejistý/občas nevhodný.",
+      "Komunikuji přiměřeně situaci; žáky aktivně zapojuji.",
+      "Komunikaci volím uváženě a udržuji pozornost žáků různými prostředky."
+    ]},
+  {id:"2d", area:2, name:"Reakce na potřeby žáků", text:"Reaguji s respektem na potřeby (sociální/fyziologické) žáků.",
+    anchors:[
+      "Potřeby žáků přehlížím; reaguji minimálně.",
+      "Potřeby vnímám, ale reaguji spíše nahodile.",
+      "Reaguji bezprostředně a přiměřeně vzniklé situaci.",
+      "Potřebám cíleně předcházím a vytvářím prostor k jejich vyjádření."
+    ]},
+  {id:"2e", area:2, name:"Odlehčení a pestrost", text:"Pracuji s atmosférou a pestrostí hodin (humor, zajímavosti, zkušenosti).",
+    anchors:[
+      "Hodiny jsou jednotvárné; pestrost nezařazuji.",
+      "Pestrost zařazuji výjimečně nebo nepřiměřeně kontextu.",
+      "Pestrost zařazuji cíleně; sleduji reakce žáků.",
+      "Pestrost plánuji a přizpůsobuji aktuálním potřebám; zvyšuje zapojení."
+    ]},
+  {id:"2f", area:2, name:"Příležitost k úspěchu", text:"Vytvářím všem žákům příležitost prožít úspěch.",
+    anchors:[
+      "Úkol je pro všechny stejný; různé úrovně nezohledňuji.",
+      "Příležitosti k úspěchu vytvářím jen pro některé žáky.",
+      "Připravuji různě náročné úkoly pro skupiny podle jejich úrovně.",
+      "Nabízím různě náročné úlohy/volby tak, aby uspěl každý; srovnávám vůči kritériím, ne mezi žáky."
+    ]},
+  {id:"2g", area:2, name:"Efektivní využití času", text:"Využívám čas ve výuce efektivně a pružně reaguji.",
+    anchors:[
+      "Čas využívám neefektivně; nereaguji na nenadálé situace.",
+      "Čas bývá částečně efektivní; reakce na situaci je neobratná.",
+      "Čas využívám většinou efektivně; reaguji přiměřeně situaci.",
+      "Čas je efektivní a hodina koherentní; reaguji pohotově a přiměřeně."
+    ]},
+  {id:"3a", area:3, name:"Smysluplnost učiva", text:"Objevujeme se žáky smysl a význam učiva.",
+    anchors:[
+      "Smysl učiva nekomunikuji; žáci neví, proč se učí.",
+      "Když se žáci ptají, vysvětluji proč se něco učíme.",
+      "Smysl propojuji s běžným životem a zájmy žáků.",
+      "Smysl je přirozenou součástí výuky; společně jej objevujeme."
+    ]},
+  {id:"3b", area:3, name:"Cíle – sdílení a ověřování", text:"Sdílím cíle (společné i individuální) a průběžně ověřuji jejich naplnění.",
+    anchors:[
+      "Cíle nejsou jasné; ověřování neprovádím.",
+      "Vyvozujeme společný cíl (spíše kognitivní).",
+      "Cíle sděluji v různých doménách a průběžně ověřuji naplnění.",
+      "Specifikuji, co má žák zvládnout ve všech doménách; cíle využívám i k sebehodnocení."
+    ]},
+  {id:"3c", area:3, name:"Srozumitelnost obsahu a instrukcí", text:"Zprostředkovávám obsah a instrukce srozumitelně (věk, možnosti žáků).",
+    anchors:[
+      "Volím nevhodný obsah/postupy; žáci nerozumí.",
+      "Snažím se, ale srozumitelnost a přiměřenost vázne.",
+      "Volím vhodné postupy; objasňuji srozumitelně.",
+      "Obsah, metody i jazyk volím uváženě s ohledem na potřeby; umím volbu zdůvodnit."
+    ]},
+  {id:"3d", area:3, name:"Věcná správnost", text:"Zprostředkovávám učivo věcně správně a s logikou.",
+    anchors:[
+      "Dělám faktické chyby; neznalost tématu.",
+      "Znalosti mám, ale občas nesprávně nakládám s informacemi.",
+      "Zvládám věcnou správnost; návaznost občas vázne.",
+      "Výklad je věcně správný a logicky vystavěný; chyby nedělám."
+    ]},
+  {id:"3e", area:3, name:"Využití předchozích znalostí", text:"Navazuji na předchozí znalosti a zkušenosti žáků.",
+    anchors:[
+      "Na předchozí znalosti nenavazuji.",
+      "Ptám se, ale návaznost ve výuce je slabá.",
+      "Diskutujeme a podle zjištění upravuji výklad/aktivity.",
+      "Systematicky navazuji v úvodu i závěru; žáci pojmenují, co si přinesli a co nového získali."
+    ]},
+  {id:"3f", area:3, name:"Metody a organizační formy", text:"Volím metody a formy podporující učení a vedoucí k cílům.",
+    anchors:[
+      "Zvolené metody a formy nejsou efektivní k cílům.",
+      "Zkouším metody/formy; efekt je omezený.",
+      "Volím účinné metody a společně reflektujeme jejich dopad.",
+      "Nabízím pestrost metod/forem; žáci volí, co je vede k jejich cílům."
+    ]},
+  {id:"3g", area:3, name:"Spolupráce a vzájemné učení žáků", text:"Vytvářím příležitosti pro spolupráci a vzájemné učení.",
+    anchors:[
+      "Příležitosti ke spolupráci nevytvářím.",
+      "Příležitosti vytvářím s podporou provázejícího.",
+      "Příležitosti pro spolupráci vytvářím samostatně a srozumitelně.",
+      "Spolupráci plánovaně diferencuji s ohledem na individualitu žáků."
+    ]},
+  {id:"3h", area:3, name:"Práce s chybou", text:"Vedu žáky k využití chyby jako příležitosti k učení.",
+    anchors:[
+      "Chybu beru jako špatný prvek – jen opravuji.",
+      "Upozorním na chybu a dám prostor k opravě.",
+      "Chybu využívám k učení – žáci chybu identifikují a opravují se zdůvodněním.",
+      "Z chyb tvořím problémové situace; žáci chybu nacházejí, vysvětlují a napravují na své úrovni."
+    ]},
+  {id:"3i", area:3, name:"ICT pro podporu učení", text:"Využívám ICT smysluplně ve vztahu k cílům a potřebám.",
+    anchors:[
+      "ICT nevyužívám nebo to neumím.",
+      "Nasazuji ICT spíše efektně než účelně.",
+      "ICT zařazuji ve vztahu k cílům; přizpůsobení je omezené.",
+      "ICT volím tak, aby podporovalo cíle i různé potřeby žáků."
+    ]},
+  {id:"4a", area:4, name:"Průběžná popisná zpětná vazba", text:"Poskytuji průběžnou popisnou ZV podle kritérií a potřeb žáků.",
+    anchors:[
+      "ZV neposkytuji; nepracujeme s kritérii.",
+      "Dávám ZV podle vlastních/přejatých kritérií, která nejsou sdílena.",
+      "Poskytuji ZV podle předem sdílených kritérií, kterým žáci rozumí.",
+      "ZV dělám podle společně vytvořených kritérií; zohledňuji individuální potřeby žáků."
+    ]},
+  {id:"4b", area:4, name:"Sebehodnocení a vzájemná ZV žáků", text:"Vedu žáky k sebehodnocení a k poskytování ZV druhým.",
+    anchors:[
+      "Žáci se do hodnocení nezapojují; sebehodnocení nezařazuji.",
+      "Zapojení je spíše výjimečné/nahodilé.",
+      "Žáci se zapojují plánovaně; sebehodnocení je pravidelné, dle cílů a kritérií.",
+      "Systematicky pracuji s názory žáků a využívám je v navazujících hodinách."
+    ]},
+  {id:"4c", area:4, name:"Různé formy hodnocení", text:"Využívám rozmanité formy hodnocení a ukazatele pokroku.",
+    anchors:[
+      "Hodnotím pouze známkou.",
+      "Známky doplňuji krátkým komentářem.",
+      "Využívám i vizuální nástroje (grafy, obrázky) na základě kritérií.",
+      "Se žáky plánujeme další kroky k cíli na základě dat o pokroku."
+    ]},
+  {id:"5a", area:5, name:"Reflexe výuky", text:"Kriticky reflektuji přípravu i průběh výuky a navrhuji kroky do další hodiny.",
+    anchors:[
+      "Reflexi nedělám nebo si na ni nenacházím čas.",
+      "Reflexi zkouším, ale analýza je spíše popisná/povrchní.",
+      "Provádím analýzu a navrhuji konkrétní kroky do další výuky.",
+      "Reflektuji kriticky a formuluji návrhy na organizaci navazujících hodin."
+    ]},
+  {id:"5b", area:5, name:"Cíle vlastního rozvoje", text:"Stanovuji a realizuji cíle profesního rozvoje; průběžně je vyhodnocuji.",
+    anchors:[
+      "Cíle vlastního rozvoje nepojmenovávám.",
+      "Cíle pojmenuji, ale nejsou konkrétní/dosažitelné/měřitelné.",
+      "Cíle pojmenuji a částečně realizuji; kroky nejsou systematické.",
+      "Cíle i kroky (časový plán) formuluji, realizuji a průběžně vyhodnocuji."
+    ]}
+];
+
+const SEMS = ["s2","s3","s4","s5","s6"];
+
+/** ====== Stav ====== */
+let state = { s2:{}, s3:{}, s4:{}, s5:{}, s6:{} };
+
+/** ====== Pomocné funkce ====== */
+function setValue(sem, id, val){
+  state[sem][id] = (val==="" || val===null) ? null : Number(val);
+  renderKPIs();
+  if(currentTab==="vyvoj") renderVyvoj();
+  // aktualizuj textové skóre v kartě
+}
+function getValue(sem, id){ const v = state[sem][id]; return (v===undefined)? null : v; }
+function avg(arr){ const nums = arr.filter(v => typeof v==="number"); return nums.length ? nums.reduce((a,b)=>a+b,0)/nums.length : null; }
+function fmt(n){ return n===null? "—" : n.toFixed(2).replace(".",","); }
+
+/** ====== Rendrování semestru ====== */
+function renderSemester(semId){
+  const host = document.getElementById(semId);
+  host.innerHTML = "";
+  const semTitle = {"s2":"2. semestr","s3":"3. semestr","s4":"4. semestr","s5":"5. semestr","s6":"6. semestr"}[semId];
+  const h2 = document.createElement("h2"); h2.textContent = semTitle; host.appendChild(h2);
+
+  [1,2,3,4,5].forEach(areaNo => {
+    const area = AREAS[areaNo];
+    const hr = document.createElement("div"); hr.className = `area-divider ${area.color}hr`; host.appendChild(hr);
+    const h3 = document.createElement("h3"); h3.innerHTML = `<span class="badge ${area.color}">${area.label}</span>`; host.appendChild(h3);
+
+    const grid = document.createElement("div"); grid.className = "grid"; host.appendChild(grid);
+
+    CRITS.filter(c => c.area===areaNo).forEach(c => {
+      const card = document.createElement("article"); card.className = "card";
+      card.innerHTML = `
+        <div class="row">
+          <span class="badge ${area.color}">${c.id}</span>
+          <h3>${c.name}</h3>
+        </div>
+        <div class="muted">${c.text}</div>
+        <div class="row scale">
+          <label class="pill">0</label>
+          <input type="range" min="0" max="3" step="1" value="${getValue(semId,c.id)??""}" aria-label="Skóre ${c.id}" />
+          <label class="pill">3</label>
+          <span class="muted">Skóre: <span class="scoreLabel" data-val>${getValue(semId,c.id)??"—"}</span></span>
+        </div>
+        <div class="anchors" data-anchors>
+          <div><strong>Slovní kotvy (0–3)</strong></div>
+          <ul>
+            <li><strong>0</strong> – ${c.anchors[0]}</li>
+            <li><strong>1</strong> – ${c.anchors[1]}</li>
+            <li><strong>2</strong> – ${c.anchors[2]}</li>
+            <li><strong>3</strong> – ${c.anchors[3]}</li>
+          </ul>
+        </div>
+        <div class="help">Zdůvodněte vybrané skóre: <em>co jsem dělal(a)</em> → <em>důkaz</em> (příprava, materiály, výstupy žáků, hospitační záznam) → <em>dopad</em> (jak vím, že to pomohlo) → <em>další krok</em>.</div>
+        <div>
+          <label class="muted">Zdůvodnění / doložení</label>
+          <textarea class="note" placeholder="Příklad: V úvodu hodiny jsme se žáky formulovali cíl v kognitivní i postojové oblasti... Důkaz: pracovní listy A/B, fotky tabule. Dopad: 19/23 žáků dokázalo vlastními slovy vysvětlit... Další krok: příště doplním sebehodnoticí škálu."></textarea>
+          <div class="row">
+            <input class="file-input" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.gif" />
+            <span class="muted small">Přiložte podklady (obrázky se vloží přímo, PDF se uvede názvem).</span>
+          </div>
+          <div class="files" data-files></div>
+        </div>
+      `;
+      const slider = card.querySelector('input[type="range"]');
+      const out = card.querySelector('[data-val]');
+      slider.addEventListener('input', (e)=>{
+        const v = Number(e.target.value);
+        out.textContent = `${v}`;
+        setValue(semId, c.id, v);
+      });
+
+      // Správa souborů (zobrazení náhledů)
+      const fileInput = card.querySelector('.file-input');
+      const filesWrap = card.querySelector('[data-files]');
+      fileInput.addEventListener('change', (e)=>{
+        filesWrap.innerHTML = "";
+        const files = Array.from(e.target.files || []);
+        files.forEach(f=>{
+          const div = document.createElement('div'); div.className = 'file-thumb';
+          if(f.type.startsWith('image/')){
+            const img = document.createElement('img');
+            img.alt = f.name;
+            div.appendChild(img);
+            const reader = new FileReader();
+            reader.onload = ev => { img.src = ev.target.result; };
+            reader.readAsDataURL(f);
+            const cap = document.createElement('div'); cap.textContent = f.name; cap.className="small muted";
+            div.appendChild(cap);
+          }else{
+            div.textContent = f.name;
+          }
+          filesWrap.appendChild(div);
+        });
+      });
+
+      grid.appendChild(card);
+    });
+  });
+}
+
+function renderAllSemesters(){ SEMS.forEach(renderSemester); }
+
+/** ====== KPI souhrny a přehled ====== */
+function computeKPIs(){
+  const perSem = SEMS.map(sem => {
+    const vals = CRITS.map(c => getValue(sem,c.id)).filter(v => typeof v==="number");
+    return {sem, avg: avg(vals)};
+  });
+  const perArea = [1,2,3,4,5].map(a => {
+    const vals = SEMS.flatMap(sem => CRITS.filter(c=>c.area===a).map(c=>getValue(sem,c.id))).filter(v=>typeof v==="number");
+    return {area:a, avg: avg(vals)};
+  });
+  return {perSem, perArea};
+}
+
+function renderKPIs(){
+  const k = computeKPIs();
+  const host = document.getElementById("kpis");
+  if(!host) return;
+  host.innerHTML = "";
+  k.perSem.forEach(({sem,avg:av})=>{
+    const div = document.createElement("div"); div.className="box";
+    const label = {"s2":"2. sem.","s3":"3. sem.","s4":"4. sem.","s5":"5. sem.","s6":"6. sem."}[sem];
+    div.innerHTML = `<span class="muted">${label}</span><b>${fmt(av)}</b><span class="small muted">průměr všech kompetencí</span>`;
+    host.appendChild(div);
+  });
+  k.perArea.forEach(({area,avg:av})=>{
+    const div = document.createElement("div"); div.className="box";
+    div.innerHTML = `<span class="muted">${AREAS[area].label}</span><b>${fmt(av)}</b>`;
+    host.appendChild(div);
+  });
+}
+
+/** ====== Trajektorie (sparkliny + tabulka) ====== */
+function renderVyvoj(){
+  renderKPIs();
+  const tb = document.querySelector("#trajTable tbody");
+  tb.innerHTML = "";
+  CRITS.forEach(c => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><strong>${c.id}</strong></td>
+      <td>${c.name}</td>
+      <td>${AREAS[c.area].label}</td>
+      ${SEMS.map(sem=>`<td style="text-align:center">${getValue(sem,c.id)??"—"}</td>`).join("")}
+      <td class="flex"><svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none"></svg></td>
+    `;
+    tb.appendChild(tr);
+    const svg = tr.querySelector(".spark");
+    const vals = SEMS.map(sem=>getValue(sem,c.id));
+    const points = vals.map((v,i)=>{
+      const x = i*(100/(SEMS.length-1));
+      const y = 30 - (v===null? 0 : v/3*30);
+      return {x,y,empty:(v===null)};
+    });
+    const d = points.map((p,i)=>`${i===0?'M':'L'} ${p.x},${p.empty?30:p.y}`).join(" ");
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d", d);
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke","#0044cc");
+    path.setAttribute("stroke-width","2");
+    svg.appendChild(path);
+    points.forEach(p=>{
+      const circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      circle.setAttribute("cx", p.x); circle.setAttribute("cy", p.empty?30:p.y); circle.setAttribute("r","2.6");
+      circle.setAttribute("fill","#0044cc");
+      svg.appendChild(circle);
+    });
+  });
+}
+
+/** ====== Tabs & kotvy ====== */
+let currentTab = "s2";
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const id = btn.getAttribute("data-tab");
+    currentTab = id;
+    document.querySelectorAll(".tab-panel").forEach(p=>{ p.hidden = p.id!==id; });
+    document.querySelectorAll(".tab-btn").forEach(b=>b.setAttribute("aria-selected", String(b===btn)));
+    if(id==="vyvoj"){ renderVyvoj(); }
+  });
+});
+
+// Globální přepínač zobrazení kotev
+const toggleAnchors = document.getElementById("toggleAnchors");
+toggleAnchors.addEventListener("change", (e)=>{
+  const show = e.target.checked;
+  document.querySelectorAll('[data-anchors]').forEach(el=>{
+    el.style.display = show? 'block' : 'none';
+  });
+});
+
+// Export do PDF (tisk)
+document.getElementById("pdfBtn").addEventListener("click", ()=>{
+  // Před tiskem otevřeme kotvy, aby se propsaly do PDF, pokud je uživatel chce
+  window.print();
+});
+
+/** ====== Inicializace ====== */
+renderAllSemesters();
+renderKPIs();
+
+</script>
+</body>
+</html>
