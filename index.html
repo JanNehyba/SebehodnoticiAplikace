@@ -92,26 +92,26 @@
 
   .sticky-summary{position:sticky;top:0;z-index:33;background:var(--bg);padding:6px 0 10px}
 
-  /* KPI BOXES: side legend + bigger spacing */
+  /* KPI BOXES */
   .kpi{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 2px}
   .kpi .box{
     background:#fff;border:1px solid var(--border);border-radius:10px;
-    display:flex;gap:16px;align-items:flex-start;justify-content:space-between;
+    display:flex;gap:16px;align-items:flex-start;
     padding:12px;min-width:320px;
   }
   .box-left{flex:1 1 auto;min-width:220px}
-  .box-left b{display:block;font-size:18px;margin-bottom:14px} /* větší rozestup nad bublinami */
-  .box-right{flex:0 0 140px;border-left:1px solid var(--border);padding-left:12px}
-  .legend{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#4b5563;margin:0}
-  .legend .rowline{display:flex;align-items:center;gap:8px}
-  .legend .dot{width:12px;height:12px;border-radius:999px;display:inline-block}
-  .dot.l0{background:var(--b0);border:1px solid var(--b0b)}
-  .dot.l1{background:var(--b1);border:1px solid var(--b1b)}
-  .dot.l2{background:var(--b2);border:1px solid var(--b2b)}
-  .dot.l3{background:var(--b3);border:1px solid var(--b3b)}
+  .box-left b{display:block;font-size:18px;margin-bottom:16px} /* větší rozestup nad bublinami */
+  /* global legend row (one per section) */
+  .legend-row{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    background:#fff;border:1px solid var(--border);border-radius:10px;padding:8px 10px;
+    margin:6px 0 10px;
+  }
+  .legend-title{font-weight:700;color:#374151;margin-right:2px}
+  .legend-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:2px 10px;background:#fff;font-size:12px;color:#4b5563}
 
   /* Bubble cluster */
-  .bubbles{display:flex;gap:20px;align-items:flex-end;margin-top:6px} /* trochu větší mezery */
+  .bubbles{display:flex;gap:20px;align-items:flex-end;margin-top:6px}
   .bubble{display:flex;align-items:center;justify-content:center;border-radius:999px; position:relative; border:1px solid var(--border); color:#0f172a}
   .bubble .lbl{position:absolute;top:-18px;font-size:11px;color:#374151}
   .bubble .val{font-weight:700;font-size:12px}
@@ -119,6 +119,11 @@
   .level1{background:var(--b1); border-color:var(--b1b)}
   .level2{background:var(--b2); border-color:var(--b2b)}
   .level3{background:var(--b3); border-color:var(--b3b)}
+  .dot{width:12px;height:12px;border-radius:999px;display:inline-block}
+  .dot.l0{background:var(--b0);border:1px solid var(--b0b)}
+  .dot.l1{background:var(--b1);border:1px solid var(--b1b)}
+  .dot.l2{background:var(--b2);border:1px solid var(--b2b)}
+  .dot.l3{background:var(--b3);border:1px solid var(--b3b)}
 
   /* Area-colored separators (as in semesters) */
   .area-divider{margin:8px 0 12px;border-top:0;height:10px}
@@ -127,8 +132,6 @@
   .a4hr{background:linear-gradient(90deg,var(--area4),transparent)}
   .a5hr{background:linear-gradient(90deg,var(--area5),transparent)}
   .a6hr{background:linear-gradient(90deg,var(--area6),transparent)}
-
-  /* Area badges remain .a2 .a3 ... */
 
   /* Overview tables with area-colored accents */
   .table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
@@ -161,6 +164,9 @@
     .tab-panel{display:block !important}
     body{background:#fff}
     .card{break-inside:avoid}
+    /* Portfolio-only print: vytiskni jen "Vývoj & přehled" */
+    body.portfolio-only .tab-panel:not(#vyvoj){display:none !important}
+    body.portfolio-only #vyvoj{display:block !important}
   }
 </style>
 </head>
@@ -187,6 +193,7 @@
       </span>
       <label class="switch" id="anchorsSwitch"><input id="toggleAnchors" type="checkbox" /> Zobrazit slovní kotvy</label>
       <button id="pdfBtn" class="btn">Export do PDF</button>
+      <button id="portfolioBtn" class="btn" style="display:none">Exportovat závěrečné portfolio</button>
     </div>
     <div class="help" id="howHelp">
       <strong>Jak psát zdůvodnění skóre:</strong> stručně uveďte co jsem dělal(a) (konkrétní postup/příklad) v rámci semestru,
@@ -205,9 +212,25 @@
     <h2>Přehled vývoje napříč semestry</h2>
 
     <h3>Souhrn za semestry</h3>
+    <!-- Jedna společná legenda pro semestry -->
+    <div class="legend-row" id="legendSemRow">
+      <span class="legend-title">Legenda:</span>
+      <span class="legend-chip"><span class="dot l0"></span> Úroveň 0</span>
+      <span class="legend-chip"><span class="dot l1"></span> Úroveň 1</span>
+      <span class="legend-chip"><span class="dot l2"></span> Úroveň 2</span>
+      <span class="legend-chip"><span class="dot l3"></span> Úroveň 3</span>
+    </div>
     <div class="kpi" id="kpiSem"></div>
 
     <h3>Souhrn po oblastech (napříč všemi semestry)</h3>
+    <!-- Jedna společná legenda pro oblasti -->
+    <div class="legend-row" id="legendAreaRow">
+      <span class="legend-title">Legenda:</span>
+      <span class="legend-chip"><span class="dot l0"></span> Úroveň 0</span>
+      <span class="legend-chip"><span class="dot l1"></span> Úroveň 1</span>
+      <span class="legend-chip"><span class="dot l2"></span> Úroveň 2</span>
+      <span class="legend-chip"><span class="dot l3"></span> Úroveň 3</span>
+    </div>
     <div class="kpi" id="kpiAreas"></div>
 
     <h3>Trajektorie jednotlivých kompetencí</h3>
@@ -220,6 +243,13 @@
 </div>
 
 <script>
+/** ====== Pomocné funkce (seedovaný random) ====== */
+function seededRandom(seed){
+  let s = seed % 2147483647; if (s <= 0) s += 2147483646;
+  return function(){ s = s * 16807 % 2147483647; return (s - 1) / 2147483646; };
+}
+function strSeed(s){ let x=0; for(let i=0;i<s.length;i++){ x += s.charCodeAt(i)*(i+1); } return x; }
+
 /** ====== Oblasti (2–6) ====== */
 const AREAS = {
   2: {label:"2 Plánování výuky", badge:"a2", color:"#ffb000"},
@@ -455,7 +485,7 @@ function renderBubbles(container, counts){
   const max = Math.max(1, counts[0], counts[1], counts[2], counts[3]);
   [0,1,2,3].forEach(level => {
     const val = counts[level] || 0;
-    const size = 26 + Math.round(50 * (val/max)); // zvětšeno: 26..76 px
+    const size = 26 + Math.round(50 * (val/max)); // 26..76 px
     const b = document.createElement("div");
     b.className = `bubble level${level}`;
     b.style.width = size+"px";
@@ -468,14 +498,13 @@ function renderBubbles(container, counts){
   });
 }
 
-/** ====== Render souhrnných boxů (s boční legendou) ====== */
+/** ====== Render souhrnných boxů (bez duplicitní legendy) ====== */
 function renderKPIBlocks(){
   // Semestry
   const semHost = document.getElementById("kpiSem"); semHost.innerHTML="";
   perSemesterCounts().forEach(({sem, counts})=>{
     const box = document.createElement("div"); box.className="box";
     const left = document.createElement("div"); left.className="box-left";
-    const right = document.createElement("div"); right.className="box-right";
     const label = {"s2":"2. semestr","s3":"3. semestr","s4":"4. semestr","s5":"5. semestr","s6":"6. semestr"}[sem];
 
     left.innerHTML = `<b>${label}</b>`;
@@ -483,37 +512,22 @@ function renderKPIBlocks(){
     renderBubbles(bubbles, counts);
     left.appendChild(bubbles);
 
-    right.innerHTML = `<div class="legend">
-        <div class="rowline"><span class="dot l0"></span> Úroveň 0</div>
-        <div class="rowline"><span class="dot l1"></span> Úroveň 1</div>
-        <div class="rowline"><span class="dot l2"></span> Úroveň 2</div>
-        <div class="rowline"><span class="dot l3"></span> Úroveň 3</div>
-      </div>`;
-
-    box.appendChild(left); box.appendChild(right);
+    box.appendChild(left);
     semHost.appendChild(box);
   });
 
-  // Oblasti – barevné orámování + stejný layout
+  // Oblasti – barevné orámování
   const areaHost = document.getElementById("kpiAreas"); areaHost.innerHTML="";
   perAreaCounts().forEach(({area, counts, label, badge})=>{
     const box = document.createElement("div"); box.className=`box area-box ${badge}box`;
     const left = document.createElement("div"); left.className="box-left";
-    const right = document.createElement("div"); right.className="box-right";
 
     left.innerHTML = `<b>${label}</b>`;
     const bubbles = document.createElement("div"); bubbles.className = "bubbles";
     renderBubbles(bubbles, counts);
     left.appendChild(bubbles);
 
-    right.innerHTML = `<div class="legend">
-        <div class="rowline"><span class="dot l0"></span> Úroveň 0</div>
-        <div class="rowline"><span class="dot l1"></span> Úroveň 1</div>
-        <div class="rowline"><span class="dot l2"></span> Úroveň 2</div>
-        <div class="rowline"><span class="dot l3"></span> Úroveň 3</div>
-      </div>`;
-
-    box.appendChild(left); box.appendChild(right);
+    box.appendChild(left);
     areaHost.appendChild(box);
   });
 }
@@ -535,13 +549,8 @@ const SUBJECTS = [
   "Bezpečné prostředí pro učení"
 ];
 
-function seededRandom(seed){
-  let s = seed % 2147483647; if (s <= 0) s += 2147483646;
-  return function(){ s = s * 16807 % 2147483647; return (s - 1) / 2147483646; };
-}
 function getSubjectsForCrit(id){
-  let seed = 0; for(let i=0;i<id.length;i++){ seed += id.charCodeAt(i)*(i+1); }
-  const rand = seededRandom(seed);
+  const rand = seededRandom(strSeed(id));
   const n = 1 + Math.floor(rand()*4);
   const idxs = new Set(); while(idxs.size < n){ idxs.add(Math.floor(rand()*SUBJECTS.length)); }
   return Array.from(idxs).map(i=>SUBJECTS[i]);
@@ -600,11 +609,49 @@ function renderTrajectories(){
   });
 }
 
+/** ====== Vygeneruj ukázková data (spíše vzrůstající trajektorie) ====== */
+function generateSampleData(){
+  CRITS.forEach(c=>{
+    const rnd = seededRandom(strSeed("scores:"+c.id));
+    // Start v rozmezí 0–1 (převážně 1)
+    let s2 = rnd() < 0.65 ? 1 : 0;
+    // Cílová hodnota (spíše 3, občas 2)
+    let target = rnd() < 0.75 ? 3 : 2;
+    if(target <= s2) target = Math.min(3, s2 + 1 + Math.round(rnd())); // zajistit růst
+
+    // Rozdistribuuj nárůst do 4 kroků (s2->s3->s4->s5->s6)
+    const diff = target - s2;
+    const steps = [0,1,2,3]; // indexy přechodů (s2->s3 ... s5->s6)
+    // vyber náhodně 'diff' kroků, kde se přičte +1, seřazené -> neklesající trajektorie
+    for(let i=steps.length-1;i>0;i--){ // shuffle Fisher–Yates
+      const j = Math.floor(rnd()*(i+1));
+      [steps[i],steps[j]] = [steps[j],steps[i]];
+    }
+    const incAt = new Set(steps.slice(0, diff).sort((a,b)=>a-b));
+
+    const seq = [s2];
+    let cur = s2;
+    for(let k=0;k<4;k++){
+      if(incAt.has(k)) cur = Math.min(3, cur+1);
+      else if(rnd()<0.15 && cur>0 && rnd()<0.3){ /* drobná variace – většinově plateau */ cur = cur; }
+      seq.push(cur);
+    }
+    // zapiš do stavu
+    state.s2[c.id] = seq[0];
+    state.s3[c.id] = seq[1];
+    state.s4[c.id] = seq[2];
+    state.s5[c.id] = seq[3];
+    state.s6[c.id] = seq[4];
+  });
+}
+
 /** ====== Tabs & kotvy ====== */
 let currentTab = "s2";
 const scaleChip = document.getElementById("scaleChip");
 const anchorsSwitch = document.getElementById("anchorsSwitch");
 const helpBox = document.getElementById("howHelp");
+const pdfBtn = document.getElementById("pdfBtn");
+const portfolioBtn = document.getElementById("portfolioBtn");
 
 document.querySelectorAll(".tab-btn").forEach(btn=>{
   btn.addEventListener("click",()=>{
@@ -616,11 +663,13 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
       if(scaleChip) scaleChip.style.display = "none";
       if(anchorsSwitch) anchorsSwitch.style.display = "none";
       if(helpBox) helpBox.style.display = "none";
+      if(portfolioBtn) portfolioBtn.style.display = "inline-flex";
       renderVyvoj();
     }else{
       if(scaleChip) scaleChip.style.display = "inline-flex";
       if(anchorsSwitch) anchorsSwitch.style.display = "inline-flex";
       if(helpBox) helpBox.style.display = "block";
+      if(portfolioBtn) portfolioBtn.style.display = "none";
     }
   });
 });
@@ -634,7 +683,14 @@ document.getElementById("toggleAnchors").addEventListener("change", (e)=>{
 });
 
 // Export do PDF
-document.getElementById("pdfBtn").addEventListener("click", ()=>{ window.print(); });
+pdfBtn.addEventListener("click", ()=>{ window.print(); });
+
+// Export portfolia (tiskne pouze sekci Vývoj & přehled)
+portfolioBtn.addEventListener("click", ()=>{
+  document.body.classList.add("portfolio-only");
+  window.print();
+  setTimeout(()=>document.body.classList.remove("portfolio-only"), 0);
+});
 
 /** ====== Render "Vývoj" ====== */
 function renderVyvoj(){
@@ -643,7 +699,8 @@ function renderVyvoj(){
 }
 
 /** ====== Inicializace ====== */
-renderAllSemesters();
+generateSampleData();          // <<< ukázkové (vyplněné) hodnoty
+renderAllSemesters();          // vykreslit semestry s předvyplněnými škálami
 </script>
 </body>
 </html>
