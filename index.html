@@ -3,22 +3,26 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SKPKS – Sebehodnocení kompetencí (v5)</title>
+<title>SKPKS – Sebehodnocení kompetencí</title>
 <style>
   :root{
     --muni-blue:#0044cc;
     --muni-blue-700:#0037a6;
-    --area1:#ffb000; /* 2 Plánování */
-    --area2:#6bbf59; /* 3 Prostředí */
-    --area3:#ff6a00; /* 4 Výuka/strategie */
-    --area4:#d3b58f; /* 5 Hodnocení */
-    --area5:#8aa0b8; /* 6 Spolupráce/rozvoj */
+
+    /* Oblastní barvy (2–6) */
+    --area2:#ffb000; /* 2 Plánování */
+    --area3:#6bbf59; /* 3 Prostředí */
+    --area4:#ff6a00; /* 4 Výuka/strategie */
+    --area5:#d3b58f; /* 5 Hodnocení */
+    --area6:#8aa0b8; /* 6 Spolupráce/rozvoj */
+
     --bg:#f7f7fb;
     --text:#1d2433;
     --muted:#6b7280;
     --card:#ffffff;
     --border:#e5e7eb;
     --chip:#eef2ff;
+
     /* Bubble palette (blue-gray intensity) */
     --b0:#eef2ff; --b0b:#e0e7ff;
     --b1:#dbeafe; --b1b:#bfdbfe;
@@ -33,6 +37,8 @@
   header h1{margin:0;font-size:clamp(20px,2.2vw,28px);letter-spacing:.3px}
   header p{margin:.35rem 0 0;opacity:.95;max-width:1100px}
   .wrap{max-width:1280px;margin:0 auto;padding:16px}
+
+  /* Tabs & toolbar */
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
   .tab-btn{
     border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;
@@ -43,6 +49,9 @@
   .toolbar .chip{background:var(--chip);color:#2b2f3a;border-radius:999px;padding:6px 10px;font-size:13px}
   .toolbar label.switch{display:inline-flex;gap:8px;align-items:center;font-weight:600}
   .toolbar input[type="checkbox"]{transform:scale(1.2)}
+  .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:600}
+
+  /* Grid & cards */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:12px}
   .card{
     background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 12px 12px;
@@ -50,8 +59,8 @@
   }
   .card h3{margin:0;font-size:16px}
   .badge{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;border-radius:6px;padding:3px 8px;display:inline-block}
-  .a2{background:var(--area1);color:#231c00}.a3{background:var(--area2);color:#052a0b}.a4{background:var(--area3);color:#2a0b00}
-  .a5{background:var(--area4);color:#2a1500}.a6{background:var(--area5);color:#001428}
+  .a2{background:var(--area2);color:#231c00}.a3{background:var(--area3);color:#052a0b}.a4{background:var(--area4);color:#2a0b00}
+  .a5{background:var(--area5);color:#2a1500}.a6{background:var(--area6);color:#001428}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .muted{color:var(--muted);font-size:13px}
   .scale{display:flex;align-items:center;gap:8px}
@@ -60,32 +69,49 @@
   .anchors{background:#fafafa;border:1px dashed var(--border);padding:10px;border-radius:10px;font-size:13px;display:none}
   .anchors ul{margin:6px 0 0 16px;padding:0}
   .anchors li{margin:4px 0}
-  .kpi{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 2px}
-  .kpi .box{background:#fff;border:1px solid var(--border);padding:12px;border-radius:10px;min-width:260px}
-  .kpi .box b{display:block;font-size:18px}
-  .table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-  .table th,.table td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px;vertical-align:middle}
-  .flex{display:flex;gap:8px;align-items:center}
-  .spark{display:block;width:120px;height:36px}
-  .area-divider{margin:6px 0 12px;border-top:0;height:12px}
-  .a2hr{background:linear-gradient(90deg,var(--area1),transparent)}
-  .a3hr{background:linear-gradient(90deg,var(--area2),transparent)}
-  .a4hr{background:linear-gradient(90deg,var(--area3),transparent)}
-  .a5hr{background:linear-gradient(90deg,var(--area4),transparent)}
-  .a6hr{background:linear-gradient(90deg,var(--area5),transparent)}
-  .note{width:100%;min-height:96px;border:1px solid var(--border);border-radius:10px;padding:8px;font-size:14px;background:#fff}
+
+  /* Note/textarea – overflow fix */
+  .note{
+    width:100%;
+    max-width:100%;
+    min-height:110px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px;
+    font-size:14px;
+    background:#fff;
+    resize:vertical;
+    box-sizing:border-box;
+  }
+
   .help{font-size:12px;color:#374151;background:#f3f4f6;border:1px solid var(--border);padding:8px;border-radius:8px}
   .files{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
   .file-thumb{border:1px solid var(--border);border-radius:8px;padding:6px;background:#fff;font-size:12px}
   .file-thumb img{display:block;max-width:140px;max-height:90px}
-  .scoreLabel{font-weight:600}
-  footer{margin:24px 0 60px;color:var(--muted)}
   .small{font-size:12px}
+
   .sticky-summary{position:sticky;top:0;z-index:33;background:var(--bg);padding:6px 0 10px}
-  .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:600}
-  .explain{font-size:12px;color:#4b5563;margin:6px 0 12px}
-  /* Bubbles */
-  .bubbles{display:flex;gap:16px;align-items:flex-end;margin:8px 0 4px}
+
+  /* KPI BOXES: side legend + bigger spacing */
+  .kpi{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 2px}
+  .kpi .box{
+    background:#fff;border:1px solid var(--border);border-radius:10px;
+    display:flex;gap:16px;align-items:flex-start;justify-content:space-between;
+    padding:12px;min-width:320px;
+  }
+  .box-left{flex:1 1 auto;min-width:220px}
+  .box-left b{display:block;font-size:18px;margin-bottom:14px} /* větší rozestup nad bublinami */
+  .box-right{flex:0 0 140px;border-left:1px solid var(--border);padding-left:12px}
+  .legend{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#4b5563;margin:0}
+  .legend .rowline{display:flex;align-items:center;gap:8px}
+  .legend .dot{width:12px;height:12px;border-radius:999px;display:inline-block}
+  .dot.l0{background:var(--b0);border:1px solid var(--b0b)}
+  .dot.l1{background:var(--b1);border:1px solid var(--b1b)}
+  .dot.l2{background:var(--b2);border:1px solid var(--b2b)}
+  .dot.l3{background:var(--b3);border:1px solid var(--b3b)}
+
+  /* Bubble cluster */
+  .bubbles{display:flex;gap:20px;align-items:flex-end;margin-top:6px} /* trochu větší mezery */
   .bubble{display:flex;align-items:center;justify-content:center;border-radius:999px; position:relative; border:1px solid var(--border); color:#0f172a}
   .bubble .lbl{position:absolute;top:-18px;font-size:11px;color:#374151}
   .bubble .val{font-weight:700;font-size:12px}
@@ -93,20 +119,48 @@
   .level1{background:var(--b1); border-color:var(--b1b)}
   .level2{background:var(--b2); border-color:var(--b2b)}
   .level3{background:var(--b3); border-color:var(--b3b)}
-  .legend{display:flex;gap:10px;align-items:center;font-size:12px;color:#4b5563;margin-top:6px;flex-wrap:wrap}
-  .legend .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:2px 8px;background:#fff}
-  .legend .dot{width:12px;height:12px;border-radius:999px;display:inline-block}
-  .dot.l0{background:var(--b0);border:1px solid var(--b0b)}
-  .dot.l1{background:var(--b1);border:1px solid var(--b1b)}
-  .dot.l2{background:var(--b2);border:1px solid var(--b2b)}
-  .dot.l3{background:var(--b3);border:1px solid var(--b3b)}
+
+  /* Area-colored separators (as in semesters) */
+  .area-divider{margin:8px 0 12px;border-top:0;height:10px}
+  .a2hr{background:linear-gradient(90deg,var(--area2),transparent)}
+  .a3hr{background:linear-gradient(90deg,var(--area3),transparent)}
+  .a4hr{background:linear-gradient(90deg,var(--area4),transparent)}
+  .a5hr{background:linear-gradient(90deg,var(--area5),transparent)}
+  .a6hr{background:linear-gradient(90deg,var(--area6),transparent)}
+
+  /* Area badges remain .a2 .a3 ... */
+
+  /* Overview tables with area-colored accents */
+  .table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .table th,.table td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px;vertical-align:middle}
+  .flex{display:flex;gap:8px;align-items:center}
+  .spark{display:block;width:120px;height:36px}
+  .table.a2-outline{border-left:4px solid var(--area2)}
+  .table.a3-outline{border-left:4px solid var(--area3)}
+  .table.a4-outline{border-left:4px solid var(--area4)}
+  .table.a5-outline{border-left:4px solid var(--area5)}
+  .table.a6-outline{border-left:4px solid var(--area6)}
+  .table.a2-outline thead th{background:linear-gradient(180deg, rgba(255,176,0,.16), transparent)}
+  .table.a3-outline thead th{background:linear-gradient(180deg, rgba(107,191,89,.16), transparent)}
+  .table.a4-outline thead th{background:linear-gradient(180deg, rgba(255,106,0,.16), transparent)}
+  .table.a5-outline thead th{background:linear-gradient(180deg, rgba(211,181,143,.26), transparent)}
+  .table.a6-outline thead th{background:linear-gradient(180deg, rgba(138,160,184,.20), transparent)}
+
+  /* Area KPI boxes colored left border */
+  .area-box.a2box{border-left:4px solid var(--area2)}
+  .area-box.a3box{border-left:4px solid var(--area3)}
+  .area-box.a4box{border-left:4px solid var(--area4)}
+  .area-box.a5box{border-left:4px solid var(--area5)}
+  .area-box.a6box{border-left:4px solid var(--area6)}
+
+  footer{margin:24px 0 60px;color:var(--muted)}
+
   @media print{
     header,.tabs,.toolbar,.pill,.scale label,input[type="range"]{display:none !important}
     .anchors{display:block !important}
     .tab-panel{display:block !important}
     body{background:#fff}
     .card{break-inside:avoid}
-    .scoreLabel{display:inline-block !important}
   }
 </style>
 </head>
@@ -151,13 +205,9 @@
     <h2>Přehled vývoje napříč semestry</h2>
 
     <h3>Souhrn za semestry</h3>
-    <div class="explain">Pro každý semestr zobrazujeme <strong>rozložení počtů hodnocení</strong> na úrovních <strong>0–3</strong>.
-      Velikost bubliny odpovídá četnosti; číslo uvnitř je <em>počet kompetencí</em> na dané úrovni.</div>
     <div class="kpi" id="kpiSem"></div>
 
     <h3>Souhrn po oblastech (napříč všemi semestry)</h3>
-    <div class="explain">U každé oblasti zobrazujeme <strong>rozložení počtů hodnocení</strong> na úrovních <strong>0–3</strong> napříč všemi semestry.
-      Počítáme pouze zadané hodnoty.</div>
     <div class="kpi" id="kpiAreas"></div>
 
     <h3>Trajektorie jednotlivých kompetencí</h3>
@@ -172,19 +222,19 @@
 <script>
 /** ====== Oblasti (2–6) ====== */
 const AREAS = {
-  2: {label:"2 Plánování výuky", color:"a2"},
-  3: {label:"3 Prostředí pro učení", color:"a3"},
-  4: {label:"4 Výuka a strategie", color:"a4"},
-  5: {label:"5 Hodnocení a zpětná vazba", color:"a5"},
-  6: {label:"6 Spolupráce a profesní rozvoj", color:"a6"}
+  2: {label:"2 Plánování výuky", badge:"a2", color:"#ffb000"},
+  3: {label:"3 Prostředí pro učení", badge:"a3", color:"#6bbf59"},
+  4: {label:"4 Výuka a strategie", badge:"a4", color:"#ff6a00"},
+  5: {label:"5 Hodnocení a zpětná vazba", badge:"a5", color:"#d3b58f"},
+  6: {label:"6 Spolupráce a profesní rozvoj", badge:"a6", color:"#8aa0b8"}
 };
 const AREA_KEYS = Object.keys(AREAS).map(Number).sort((a,b)=>a-b);
 
-/** ====== Revidovaný rámec: stejné jako v4 (zkrácené/parafráze úrovní 0–3) ====== */
+/** ====== Rámec (zkrácené/parafráze úrovní 0–3) ====== */
 const CRITS = [
   {id:"2.1a", area:2, name:"Konzultuji přípravu – návaznost na ŠVP", text:"Při plánování pracuji s kurikulárními dokumenty a konzultuji přípravu s provázejícím učitelem.",
    anchors:["Neznám ŠVP/tematický plán ani předchozí práci; přípravu nekonzultuji, nereaguji na připomínky.","Konzultuji bez předchozí znalosti návazností; připomínky nezapracovávám.","Plánuji v návaznosti na ŠVP/tematický plán a předchozí práci; v průběhu konzultací přípravu upravuji.","Plánuji v návaznosti na ŠVP/tematický plán a předchozí práci; připomínky provázejícího samostatně zapracovávám a rozvíjím."]},
-  {id:"2.1b", area:2, name:"Cíle – komplexní nastavení (OVU, KK, gramotnosti)", text:"Cíle plánuję komplexně ve vztahu k OVU, klíčovým kompetencím a gramotnostem.",
+  {id:"2.1b", area:2, name:"Cíle – komplexní nastavení (OVU, KK, gramotnosti)", text:"Cíle plánuji komplexně ve vztahu k OVU, klíčovým kompetencím a gramotnostem.",
    anchors:["Cíle směřují jen do jedné oblasti (např. pouze kognitivní).","Občas cíle rozšířím o další oblasti; gramotnosti/průřezová témata zařazuji intuitivně.","Cíleně směřuji k naplňování OVU a rozvoji klíčových kompetencí; plánuji gramotnosti a průřezová témata.","Systematicky propojuji OVU, klíčové kompetence, gramotnosti i průřezová témata."]},
   {id:"2.1c", area:2, name:"Formuluji ověřitelné cíle", text:"Formuluji ověřitelné výukové cíle v různých doménách a navazuji na koncepci výuky.",
    anchors:["Cíle nestanovuji; plánuji pouze obsah.","Cíle formuluji příležitostně a nesystematicky; nejsou ověřitelné.","S podporou formuluji ověřitelné cíle v souladu s koncepcí výuky.","Samostatně formuluji ověřitelné cíle v souladu s koncepcí a OVU."]},
@@ -297,8 +347,8 @@ function renderSemester(semId){
 
   AREA_KEYS.forEach(areaNo => {
     const area = AREAS[areaNo];
-    const hr = document.createElement("div"); hr.className = `area-divider ${area.color}hr`; host.appendChild(hr);
-    const h3 = document.createElement("h3"); h3.innerHTML = `<span class="badge ${area.color}">${area.label}</span>`; host.appendChild(h3);
+    const hr = document.createElement("div"); hr.className = `area-divider ${area.badge}hr`; host.appendChild(hr);
+    const h3 = document.createElement("h3"); h3.innerHTML = `<span class="badge ${area.badge}">${area.label}</span>`; host.appendChild(h3);
 
     const grid = document.createElement("div"); grid.className = "grid"; host.appendChild(grid);
 
@@ -306,7 +356,7 @@ function renderSemester(semId){
       const card = document.createElement("article"); card.className = "card";
       card.innerHTML = `
         <div class="row">
-          <span class="badge ${area.color}">${c.id}</span>
+          <span class="badge ${area.badge}">${c.id}</span>
           <h3>${c.name}</h3>
         </div>
         <div class="muted">${c.text}</div>
@@ -314,7 +364,7 @@ function renderSemester(semId){
           <label class="pill">0</label>
           <input type="range" min="0" max="3" step="1" value="${getValue(semId,c.id)??""}" aria-label="Skóre ${c.id}" />
           <label class="pill">3</label>
-          <span class="muted">Skóre: <span class="scoreLabel" data-val>${getValue(semId,c.id)??"—"}</span></span>
+          <span class="muted">Skóre: <span class="small" data-val>${getValue(semId,c.id)??"—"}</span></span>
         </div>
         <div class="anchors" data-anchors>
           <div><strong>Slovní kotvy (0–3)</strong></div>
@@ -395,7 +445,7 @@ function perAreaCounts(){
         if(isNumber(v)) counts[v]++;
       });
     });
-    return {area, counts, label: AREAS[area].label};
+    return {area, counts, label: AREAS[area].label, badge: AREAS[area].badge};
   });
 }
 
@@ -405,7 +455,7 @@ function renderBubbles(container, counts){
   const max = Math.max(1, counts[0], counts[1], counts[2], counts[3]);
   [0,1,2,3].forEach(level => {
     const val = counts[level] || 0;
-    const size = 24 + Math.round(46 * (val/max)); // 24..70 px
+    const size = 26 + Math.round(50 * (val/max)); // zvětšeno: 26..76 px
     const b = document.createElement("div");
     b.className = `bubble level${level}`;
     b.style.width = size+"px";
@@ -418,45 +468,57 @@ function renderBubbles(container, counts){
   });
 }
 
-/** ====== Render souhrnných boxů ====== */
+/** ====== Render souhrnných boxů (s boční legendou) ====== */
 function renderKPIBlocks(){
   // Semestry
   const semHost = document.getElementById("kpiSem"); semHost.innerHTML="";
   perSemesterCounts().forEach(({sem, counts})=>{
     const box = document.createElement("div"); box.className="box";
+    const left = document.createElement("div"); left.className="box-left";
+    const right = document.createElement("div"); right.className="box-right";
     const label = {"s2":"2. semestr","s3":"3. semestr","s4":"4. semestr","s5":"5. semestr","s6":"6. semestr"}[sem];
+
+    left.innerHTML = `<b>${label}</b>`;
     const bubbles = document.createElement("div"); bubbles.className = "bubbles";
     renderBubbles(bubbles, counts);
-    box.innerHTML = `<b>${label}</b>`;
-    box.appendChild(bubbles);
-    const legend = document.createElement("div"); legend.className="legend";
-    legend.innerHTML = `<span class="chip"><span class="dot l0"></span> Úroveň 0</span>
-                        <span class="chip"><span class="dot l1"></span> Úroveň 1</span>
-                        <span class="chip"><span class="dot l2"></span> Úroveň 2</span>
-                        <span class="chip"><span class="dot l3"></span> Úroveň 3</span>`;
-    box.appendChild(legend);
+    left.appendChild(bubbles);
+
+    right.innerHTML = `<div class="legend">
+        <div class="rowline"><span class="dot l0"></span> Úroveň 0</div>
+        <div class="rowline"><span class="dot l1"></span> Úroveň 1</div>
+        <div class="rowline"><span class="dot l2"></span> Úroveň 2</div>
+        <div class="rowline"><span class="dot l3"></span> Úroveň 3</div>
+      </div>`;
+
+    box.appendChild(left); box.appendChild(right);
     semHost.appendChild(box);
   });
 
-  // Oblasti
+  // Oblasti – barevné orámování + stejný layout
   const areaHost = document.getElementById("kpiAreas"); areaHost.innerHTML="";
-  perAreaCounts().forEach(({area, counts, label})=>{
-    const box = document.createElement("div"); box.className="box";
+  perAreaCounts().forEach(({area, counts, label, badge})=>{
+    const box = document.createElement("div"); box.className=`box area-box ${badge}box`;
+    const left = document.createElement("div"); left.className="box-left";
+    const right = document.createElement("div"); right.className="box-right";
+
+    left.innerHTML = `<b>${label}</b>`;
     const bubbles = document.createElement("div"); bubbles.className = "bubbles";
     renderBubbles(bubbles, counts);
-    box.innerHTML = `<b>${label}</b>`;
-    box.appendChild(bubbles);
-    const legend = document.createElement("div"); legend.className="legend";
-    legend.innerHTML = `<span class="chip"><span class="dot l0"></span> Úroveň 0</span>
-                        <span class="chip"><span class="dot l1"></span> Úroveň 1</span>
-                        <span class="chip"><span class="dot l2"></span> Úroveň 2</span>
-                        <span class="chip"><span class="dot l3"></span> Úroveň 3</span>`;
-    box.appendChild(legend);
+    left.appendChild(bubbles);
+
+    right.innerHTML = `<div class="legend">
+        <div class="rowline"><span class="dot l0"></span> Úroveň 0</div>
+        <div class="rowline"><span class="dot l1"></span> Úroveň 1</div>
+        <div class="rowline"><span class="dot l2"></span> Úroveň 2</div>
+        <div class="rowline"><span class="dot l3"></span> Úroveň 3</div>
+      </div>`;
+
+    box.appendChild(left); box.appendChild(right);
     areaHost.appendChild(box);
   });
 }
 
-/** ====== Trajektorie: stejné jako v4 (po oblastech) + Artefakty, Předměty ====== */
+/** ====== Trajektorie (po oblastech) – barevné oddělení tabulek ====== */
 const SUBJECTS = [
   "Základy pedagogického myšlení",
   "Úvod do kognitivní a sociální psychologie",
@@ -472,6 +534,7 @@ const SUBJECTS = [
   "Oborová praxe",
   "Bezpečné prostředí pro učení"
 ];
+
 function seededRandom(seed){
   let s = seed % 2147483647; if (s <= 0) s += 2147483646;
   return function(){ s = s * 16807 % 2147483647; return (s - 1) / 2147483646; };
@@ -489,14 +552,14 @@ function renderTrajectories(){
   wrap.innerHTML = "";
   AREA_KEYS.forEach(areaNo => {
     const area = AREAS[areaNo];
-    const hr = document.createElement("div"); hr.className = `area-divider ${area.color}hr`; wrap.appendChild(hr);
-    const h3 = document.createElement("h3"); h3.innerHTML = `<span class="badge ${area.color}">${area.label}</span>`; wrap.appendChild(h3);
+    const hr = document.createElement("div"); hr.className = `area-divider ${area.badge}hr`; wrap.appendChild(hr);
+    const h3 = document.createElement("h3"); h3.innerHTML = `<span class="badge ${area.badge}">${area.label}</span>`; wrap.appendChild(h3);
 
-    const table = document.createElement("table"); table.className = "table";
+    const table = document.createElement("table"); table.className = `table ${area.badge}-outline`;
     table.innerHTML = `<thead><tr>
-        <th>Kód</th><th>Kompetence</th>
-        <th>2.</th><th>3.</th><th>4.</th><th>5.</th><th>6.</th>
-        <th>Trend</th><th>Artefakty</th><th>Předměty</th>
+        <th style="width:88px">Kód</th><th>Kompetence</th>
+        <th style="width:52px">2.</th><th style="width:52px">3.</th><th style="width:52px">4.</th><th style="width:52px">5.</th><th style="width:52px">6.</th>
+        <th style="width:130px">Trend</th><th style="width:90px">Artefakty</th><th style="width:320px">Předměty</th>
       </tr></thead><tbody></tbody>`;
     const tb = table.querySelector("tbody");
 
@@ -523,13 +586,13 @@ function renderTrajectories(){
       const path = document.createElementNS("http://www.w3.org/2000/svg","path");
       path.setAttribute("d", d);
       path.setAttribute("fill","none");
-      path.setAttribute("stroke","#0044cc");
+      path.setAttribute("stroke", "#0044cc");
       path.setAttribute("stroke-width","2");
       svg.appendChild(path);
       points.forEach(p=>{
         const circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
         circle.setAttribute("cx", p.x); circle.setAttribute("cy", p.empty?30:p.y); circle.setAttribute("r","2.6");
-        circle.setAttribute("fill","#0044cc");
+        circle.setAttribute("fill", "#0044cc");
         svg.appendChild(circle);
       });
     });
@@ -563,8 +626,7 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
 });
 
 // Přepínač kotev
-const toggleAnchors = document.getElementById("toggleAnchors");
-toggleAnchors.addEventListener("change", (e)=>{
+document.getElementById("toggleAnchors").addEventListener("change", (e)=>{
   const show = e.target.checked;
   document.querySelectorAll('[data-anchors]').forEach(el=>{
     el.style.display = show? 'block' : 'none';
