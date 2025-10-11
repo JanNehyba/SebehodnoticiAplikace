@@ -100,7 +100,9 @@
     padding:12px;min-width:320px;
   }
   .box-left{flex:1 1 auto;min-width:220px}
-  .box-left b{display:block;font-size:18px;margin-bottom:16px} /* větší rozestup nad bublinami */
+  .box-left b{display:block;font-size:18px;margin-bottom:6px}
+  .box-meta{font-size:12px;color:#4b5563;margin-bottom:10px}
+
   /* global legend row (one per section) */
   .legend-row{
     display:flex;align-items:center;gap:12px;flex-wrap:wrap;
@@ -111,7 +113,7 @@
   .legend-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:2px 10px;background:#fff;font-size:12px;color:#4b5563}
 
   /* Bubble cluster */
-  .bubbles{display:flex;gap:20px;align-items:flex-end;margin-top:6px}
+  .bubbles{display:flex;gap:20px;align-items:flex-end;margin-top:8px}
   .bubble{display:flex;align-items:center;justify-content:center;border-radius:999px; position:relative; border:1px solid var(--border); color:#0f172a}
   .bubble .lbl{position:absolute;top:-18px;font-size:11px;color:#374151}
   .bubble .val{font-weight:700;font-size:12px}
@@ -168,6 +170,12 @@
     body.portfolio-only .tab-panel:not(#vyvoj){display:none !important}
     body.portfolio-only #vyvoj{display:block !important}
   }
+
+  /* Semester journal (reflection) */
+  .journal{border-left:4px solid var(--muni-blue)}
+  .journal h3{margin:0 0 4px 0;font-size:16px}
+  .journal .note{min-height:160px}
+
 </style>
 </head>
 <body>
@@ -260,7 +268,7 @@ const AREAS = {
 };
 const AREA_KEYS = Object.keys(AREAS).map(Number).sort((a,b)=>a-b);
 
-/** ====== Rámec (zkrácené/parafráze úrovní 0–3) ====== */
+/** ====== Rámec ====== */
 const CRITS = [
   {id:"2.1a", area:2, name:"Konzultuji přípravu – návaznost na ŠVP", text:"Při plánování pracuji s kurikulárními dokumenty a konzultuji přípravu s provázejícím učitelem.",
    anchors:["Neznám ŠVP/tematický plán ani předchozí práci; přípravu nekonzultuji, nereaguji na připomínky.","Konzultuji bez předchozí znalosti návazností; připomínky nezapracovávám.","Plánuji v návaznosti na ŠVP/tematický plán a předchozí práci; v průběhu konzultací přípravu upravuji.","Plánuji v návaznosti na ŠVP/tematický plán a předchozí práci; připomínky provázejícího samostatně zapracovávám a rozvíjím."]},
@@ -353,9 +361,20 @@ const CRITS = [
 ];
 
 const SEMS = ["s2","s3","s4","s5","s6"];
+const TOTAL_CRITS = CRITS.length;
+
+
+const REFLEXE_PLACEHOLDERS = {
+  s2: "Příklad (2. semestr): Zaměřil(a) jsem se na základy plánování výuky (2.1–2.4). Zkusil(a) jsem připravit hodinu s jasnými cíli a jednoduchým ověřením. Důkazy: příprava hodiny k tématu [odkaz]. Další krok: lépe propojit cíle s gramotnostmi a časovým plánem.",
+  s3: "Příklad (3. semestr): Pracoval(a) jsem na budování bezpečného prostředí a pravidel (3.1–3.3). Zavedl(a) jsem rutiny a popisný jazyk pro oceňování chování. Důkazy: třídní pravidla, reflexe z praxe, fotodokumentace uspořádání třídy. Další krok: promyšleněji pracovat se spoluprací žáků a digitálními nástroji.",
+  s4: "Příklad (4. semestr): Posun v práci s obsahem a metodami (4.1–4.3). Před výkladem jsem zjišťoval(a) předchozí znalosti žáků a propojoval(a) učivo s praxí. Důkazy: přípravy, reflexe. Další krok: pružněji reagovat na nenadálé situace během hodiny.",
+  s5: "Příklad (5. semestr): Rozvoj v poskytování průběžné zpětné vazby a hodnocení (5.1–5.3). Využil(a) jsem kritéria a popisný jazyk; žáci si vedli sebehodnocení. Důkazy: kritéria hodnocení, vzorky žákovských prací s komentáři. Další krok: více zapojit žáky do plánování cílů a ověřování jejich naplnění.",
+  s6: "Příklad (6. semestr): Závěrečná reflexe profesního rozvoje a učitelské identity (6.1–6.3). Zhodnotil(a) jsem posun v oblastech 2–6 a vybral(a) klíčové artefakty. Další krok: plán profesního rozvoje po ukončení praxe (mentoring, kurzy, praxe)."
+};
+
 
 /** ====== Stav hodnot a souborů ====== */
-let state = { s2:{}, s3:{}, s4:{}, s5:{}, s6:{} };          // hodnoty 0–3
+let state = { s2:{}, s3:{}, s4:{}, s5:{}, s6:{} };          // hodnoty 0–3 nebo null (NA)
 let filesState = { s2:{}, s3:{}, s4:{}, s5:{}, s6:{} };      // počty souborů u kritérií
 
 function setValue(sem, id, val){
@@ -366,7 +385,7 @@ function getValue(sem, id){ const v = state[sem][id]; return (v===undefined)? nu
 function countArtifactsForCrit(id){
   return SEMS.reduce((acc,sem)=>acc + (filesState[sem]?.[id]||0), 0);
 }
-function isNumber(v){ return typeof v==="number"; }
+function isNumber(v){ return typeof v==="number" && !isNaN(v); }
 
 /** ====== UI: render semestru ====== */
 function renderSemester(semId){
@@ -375,7 +394,20 @@ function renderSemester(semId){
   const semTitle = {"s2":"2. semestr","s3":"3. semestr","s4":"4. semestr","s5":"5. semestr","s6":"6. semestr"}[semId];
   const h2 = document.createElement("h2"); h2.textContent = semTitle; host.appendChild(h2);
 
-  AREA_KEYS.forEach(areaNo => {
+  
+  // Semestrální deník (reflexe) – před kompetencemi
+  (function(){
+    const example = REFLEXE_PLACEHOLDERS[semId] || "";
+    const card = document.createElement("article");
+    card.className = "card journal";
+    card.innerHTML = `
+      <h3>Semestrální reflexe &amp; plán dalšího rozvoje</h3>
+      <div class="muted">Tento deníkový záznam je součástí Vašeho profesního rozvoje a slouží jako <strong>podklad pro závěrečné portfolio</strong>. Doporučení k obsahu: popište <em>čeho jste dosáhl/a v oblasti vašeho osobního a profesního rozvoje, případně uveďte důkazy vašeho pokroku a uveďte další kroky vašeho profesního rozvoje.</em></div>
+      <textarea class="note" aria-label="Semestrální reflexe a plán – ${semTitle}" placeholder="Vaše semestrální reflexe…">${example}</textarea>
+    `;
+    host.appendChild(card);
+  })();
+AREA_KEYS.forEach(areaNo => {
     const area = AREAS[areaNo];
     const hr = document.createElement("div"); hr.className = `area-divider ${area.badge}hr`; host.appendChild(hr);
     const h3 = document.createElement("h3"); h3.innerHTML = `<span class="badge ${area.badge}">${area.label}</span>`; host.appendChild(h3);
@@ -383,6 +415,7 @@ function renderSemester(semId){
     const grid = document.createElement("div"); grid.className = "grid"; host.appendChild(grid);
 
     CRITS.filter(c => c.area===areaNo).forEach(c => {
+      const curVal = getValue(semId,c.id);
       const card = document.createElement("article"); card.className = "card";
       card.innerHTML = `
         <div class="row">
@@ -392,9 +425,12 @@ function renderSemester(semId){
         <div class="muted">${c.text}</div>
         <div class="row scale">
           <label class="pill">0</label>
-          <input type="range" min="0" max="3" step="1" value="${getValue(semId,c.id)??""}" aria-label="Skóre ${c.id}" />
+          <input type="range" min="0" max="3" step="1" value="${isNumber(curVal)?curVal:""}" aria-label="Skóre ${c.id}" ${curVal===null?"disabled":""}/>
           <label class="pill">3</label>
-          <span class="muted">Skóre: <span class="small" data-val>${getValue(semId,c.id)??"—"}</span></span>
+          <span class="muted">Skóre: <span class="small" data-val>${curVal===null?"N/A":(isNumber(curVal)?curVal:"—")}</span></span>
+          <label class="pill" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px">
+            <input type="checkbox" class="na-toggle" ${curVal===null?"checked":""}/> Nehodnoceno (N/A)
+          </label>
         </div>
         <div class="anchors" data-anchors>
           <div><strong>Slovní kotvy (0–3)</strong></div>
@@ -416,13 +452,35 @@ function renderSemester(semId){
       `;
       const slider = card.querySelector('input[type="range"]');
       const out = card.querySelector('[data-val]');
+      const naToggle = card.querySelector('.na-toggle');
+
+      // Slider change -> set numeric & uncheck NA
       slider.addEventListener('input', (e)=>{
         const v = Number(e.target.value);
         out.textContent = `${v}`;
+        if(naToggle.checked){ naToggle.checked = false; }
+        slider.disabled = false;
         setValue(semId, c.id, v);
       });
 
-      // Správa souborů (zobrazení náhledů) + uložení počtu
+      // NA toggle -> set null & disable slider (or restore to 1 if unchecked and no previous value)
+      naToggle.addEventListener('change', (e)=>{
+        if(e.target.checked){
+          setValue(semId, c.id, null);
+          slider.disabled = true;
+          out.textContent = "N/A";
+        }else{
+          const fallback = 1;
+          slider.disabled = false;
+          if(!isNumber(getValue(semId,c.id))){
+            slider.value = fallback;
+            out.textContent = String(fallback);
+            setValue(semId, c.id, fallback);
+          }
+        }
+      });
+
+      // Správa souborů
       const fileInput = card.querySelector('.file-input');
       const filesWrap = card.querySelector('[data-files]');
       fileInput.addEventListener('change', (e)=>{
@@ -458,24 +516,25 @@ function renderAllSemesters(){ SEMS.forEach(renderSemester); }
 /** ====== Souhrny (bubliny) ====== */
 function perSemesterCounts(){
   return SEMS.map(sem => {
-    const vals = CRITS.map(c => getValue(sem,c.id)).filter(v => v!==null && v!==undefined);
+    const vals = CRITS.map(c => getValue(sem,c.id));
+    const rated = vals.filter(v => isNumber(v)).length;
     const counts = {0:0,1:0,2:0,3:0};
     vals.forEach(v => { if(isNumber(v)) counts[v]++; });
-    return {sem, counts};
+    return {sem, counts, rated, total: TOTAL_CRITS};
   });
 }
 
 function perAreaCounts(){
   return AREA_KEYS.map(area => {
     const crits = CRITS.filter(c=>c.area===area);
-    const counts = {0:0,1:0,2:0,3:0};
+    const perSemVals = [];
     SEMS.forEach(sem => {
-      crits.forEach(c => {
-        const v = getValue(sem,c.id);
-        if(isNumber(v)) counts[v]++;
-      });
+      crits.forEach(c => perSemVals.push(getValue(sem,c.id)));
     });
-    return {area, counts, label: AREAS[area].label, badge: AREAS[area].badge};
+    const rated = perSemVals.filter(v => isNumber(v)).length;
+    const counts = {0:0,1:0,2:0,3:0};
+    perSemVals.forEach(v => { if(isNumber(v)) counts[v]++; });
+    return {area, counts, rated, total: crits.length * SEMS.length, label: AREAS[area].label, badge: AREAS[area].badge};
   });
 }
 
@@ -498,16 +557,16 @@ function renderBubbles(container, counts){
   });
 }
 
-/** ====== Render souhrnných boxů (bez duplicitní legendy) ====== */
+/** ====== Render souhrnných boxů (přidán "Ohodnoceno X/Y") ====== */
 function renderKPIBlocks(){
   // Semestry
   const semHost = document.getElementById("kpiSem"); semHost.innerHTML="";
-  perSemesterCounts().forEach(({sem, counts})=>{
+  perSemesterCounts().forEach(({sem, counts, rated, total})=>{
     const box = document.createElement("div"); box.className="box";
     const left = document.createElement("div"); left.className="box-left";
     const label = {"s2":"2. semestr","s3":"3. semestr","s4":"4. semestr","s5":"5. semestr","s6":"6. semestr"}[sem];
 
-    left.innerHTML = `<b>${label}</b>`;
+    left.innerHTML = `<b>${label}</b><div class="box-meta">Ohodnoceno: <strong>${rated}</strong> / ${total}</div>`;
     const bubbles = document.createElement("div"); bubbles.className = "bubbles";
     renderBubbles(bubbles, counts);
     left.appendChild(bubbles);
@@ -516,13 +575,13 @@ function renderKPIBlocks(){
     semHost.appendChild(box);
   });
 
-  // Oblasti – barevné orámování
+  // Oblasti – barevné orámování + meta
   const areaHost = document.getElementById("kpiAreas"); areaHost.innerHTML="";
-  perAreaCounts().forEach(({area, counts, label, badge})=>{
+  perAreaCounts().forEach(({area, counts, rated, total, label, badge})=>{
     const box = document.createElement("div"); box.className=`box area-box ${badge}box`;
     const left = document.createElement("div"); left.className="box-left";
 
-    left.innerHTML = `<b>${label}</b>`;
+    left.innerHTML = `<b>${label}</b><div class="box-meta">Ohodnoceno: <strong>${rated}</strong> / ${total}</div>`;
     const bubbles = document.createElement("div"); bubbles.className = "bubbles";
     renderBubbles(bubbles, counts);
     left.appendChild(bubbles);
@@ -556,6 +615,37 @@ function getSubjectsForCrit(id){
   return Array.from(idxs).map(i=>SUBJECTS[i]);
 }
 
+// Draw sparkline that skips NA (null) – no line/circle for NA points
+function drawSparkline(svgEl, values){
+  while(svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+  const pts = values.map((v,i)=>({x:i*(100/(values.length-1)), y: 30 - (v===null? 0 : v/3*30), v}));
+  let pathD = "";
+  for(let i=0;i<pts.length;i++){
+    const p = pts[i];
+    if(isNumber(p.v)){
+      // find previous numeric to decide M/L
+      let prevNumeric = i>0 && isNumber(pts[i-1].v);
+      pathD += `${prevNumeric?'L':'M'} ${p.x},${p.y} `;
+    }
+  }
+  if(pathD){
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d", pathD.trim());
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke", "#0044cc");
+    path.setAttribute("stroke-width","2");
+    svgEl.appendChild(path);
+  }
+  pts.forEach(p=>{
+    if(isNumber(p.v)){
+      const circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      circle.setAttribute("cx", p.x); circle.setAttribute("cy", p.y); circle.setAttribute("r","2.6");
+      circle.setAttribute("fill", "#0044cc");
+      svgEl.appendChild(circle);
+    }
+  });
+}
+
 function renderTrajectories(){
   const wrap = document.getElementById("trajWrap");
   wrap.innerHTML = "";
@@ -578,7 +668,7 @@ function renderTrajectories(){
       tr.innerHTML = `
         <td><strong>${c.id}</strong></td>
         <td>${c.name}</td>
-        ${SEMS.map(sem=>`<td style="text-align:center">${getValue(sem,c.id)??"—"}</td>`).join("")}
+        ${SEMS.map(sem=>`<td style="text-align:center">${isNumber(getValue(sem,c.id))?getValue(sem,c.id):"—"}</td>`).join("")}
         <td class="flex"><svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none"></svg></td>
         <td style="text-align:center">${artifacts}</td>
         <td class="small">${getSubjectsForCrit(c.id).join(", ")}</td>
@@ -586,30 +676,13 @@ function renderTrajectories(){
       tb.appendChild(tr);
       const svg = tr.querySelector(".spark");
       const vals = SEMS.map(sem=>getValue(sem,c.id));
-      const points = vals.map((v,i)=>{
-        const x = i*(100/(SEMS.length-1));
-        const y = 30 - (v===null? 0 : v/3*30);
-        return {x,y,empty:(v===null)};
-      });
-      const d = points.map((p,i)=>`${i===0?'M':'L'} ${p.x},${p.empty?30:p.y}`).join(" ");
-      const path = document.createElementNS("http://www.w3.org/2000/svg","path");
-      path.setAttribute("d", d);
-      path.setAttribute("fill","none");
-      path.setAttribute("stroke", "#0044cc");
-      path.setAttribute("stroke-width","2");
-      svg.appendChild(path);
-      points.forEach(p=>{
-        const circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
-        circle.setAttribute("cx", p.x); circle.setAttribute("cy", p.empty?30:p.y); circle.setAttribute("r","2.6");
-        circle.setAttribute("fill", "#0044cc");
-        svg.appendChild(circle);
-      });
+      drawSparkline(svg, vals);
     });
     wrap.appendChild(table);
   });
 }
 
-/** ====== Vygeneruj ukázková data (spíše vzrůstající trajektorie) ====== */
+/** ====== Vygeneruj ukázková data (spíše vzrůstající trajektorie, část NA) ====== */
 function generateSampleData(){
   CRITS.forEach(c=>{
     const rnd = seededRandom(strSeed("scores:"+c.id));
@@ -622,8 +695,8 @@ function generateSampleData(){
     // Rozdistribuuj nárůst do 4 kroků (s2->s3->s4->s5->s6)
     const diff = target - s2;
     const steps = [0,1,2,3]; // indexy přechodů (s2->s3 ... s5->s6)
-    // vyber náhodně 'diff' kroků, kde se přičte +1, seřazené -> neklesající trajektorie
-    for(let i=steps.length-1;i>0;i--){ // shuffle Fisher–Yates
+    // shuffle
+    for(let i=steps.length-1;i>0;i--){
       const j = Math.floor(rnd()*(i+1));
       [steps[i],steps[j]] = [steps[j],steps[i]];
     }
@@ -633,9 +706,15 @@ function generateSampleData(){
     let cur = s2;
     for(let k=0;k<4;k++){
       if(incAt.has(k)) cur = Math.min(3, cur+1);
-      else if(rnd()<0.15 && cur>0 && rnd()<0.3){ /* drobná variace – většinově plateau */ cur = cur; }
       seq.push(cur);
     }
+
+    // Vlož náhodná N/A (nižší pravděpodobnost v pozdějších semestrech)
+    const naProb = [0.12, 0.12, 0.08, 0.06, 0.04]; // pro 2.–6. semestr
+    for(let i=0;i<5;i++){
+      if(rnd() < naProb[i]) seq[i] = null;
+    }
+
     // zapiš do stavu
     state.s2[c.id] = seq[0];
     state.s3[c.id] = seq[1];
@@ -699,7 +778,7 @@ function renderVyvoj(){
 }
 
 /** ====== Inicializace ====== */
-generateSampleData();          // <<< ukázkové (vyplněné) hodnoty
+generateSampleData();          // ukázkové (vyplněné) hodnoty vč. NA
 renderAllSemesters();          // vykreslit semestry s předvyplněnými škálami
 </script>
 </body>
