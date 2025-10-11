@@ -3,178 +3,337 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sebehodnocení – návrh rozhraní (škála 0–100%) + přílohy</title>
+  <title>IS MU – Sebehodnocení (škála) – náhled pro testery</title>
   <style>
-    :root {
-      --bg:#f7f7fb; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e2e8f0; --accent:#2563eb;
+    :root{
+      --muni-blue:#0055A4;
+      --link:#0055A4;
+      --text:#202124;
+      --muted:#5f6368;
+      --line:#d9d9d9;
+      --bg:#ffffff;
+      --panel:#fff;
+      --chip:#f0f3f8;
     }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--text); background:var(--bg); line-height:1.5; }
-    header.page { max-width:860px; margin:32px auto 16px; padding:0 16px; }
-    header.page h1 { margin:0 0 6px; font-weight:800; letter-spacing:-.02em; }
-    header.page p { margin:4px 0; color:var(--muted); }
-    main { max-width:860px; margin:0 auto 80px; padding:0 16px; display:grid; gap:16px; }
-    .card { border:1px solid var(--line); background:var(--card); border-radius:12px; padding:18px; }
-    .subject h2 { margin:0 0 4px; font-size:1.15rem; letter-spacing:-.01em; }
-    .subject .sub { color:var(--muted); font-size:.95rem; margin:0 0 10px; }
-    .explain { border:1px dashed var(--line); border-radius:10px; padding:8px 10px; background:#fbfdff; color:var(--muted); font-size:.95rem; margin:8px 0 12px; }
-    .outputs { list-style:none; padding:0; margin:0; display:grid; gap:10px; }
-    .outputs li { border:1px solid var(--line); border-radius:10px; padding:12px; background:#fff; }
-    .row { display:grid; grid-template-columns: 1.2fr 1fr; gap:14px; align-items:center; }
-    @media (max-width: 720px) { .row { grid-template-columns: 1fr; gap:8px; } }
-    .output-text { font-size:1rem; }
-    .scale { display:grid; gap:6px; }
-    .scale input[type="range"] { width:100%; }
-    .scale-legend { display:flex; justify-content:space-between; font-size:.9rem; color:var(--muted); }
-    .scale-legend span { white-space:nowrap; }
-    /* Better default style for range */
-    input[type="range"] {
-      -webkit-appearance: none; appearance: none; height: 4px; background: var(--line); border-radius: 999px; outline: none;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{ margin:0; background:var(--bg); color:var(--text); font:14px/1.45 Verdana, Arial, Helvetica, sans-serif;}
+    a{color:var(--link); text-decoration:underline;} a:hover{text-decoration:none}
+    .is-header{background:var(--muni-blue); color:#fff;}
+    .is-header .container{max-width:1000px; margin:0 auto; padding:10px 12px; display:flex; align-items:center; gap:12px;}
+    .is-title{font-weight:700; letter-spacing:.02em;}
+    .is-sub{opacity:.9}
+    .crumbs{border-bottom:1px solid var(--line); background:#f8f9fa;}
+    .crumbs .container{max-width:1000px; margin:0 auto; padding:8px 12px; color:#444;}
+    .crumbs .sep{margin:0 6px; color:#999;}
+    main{max-width:1000px; margin:16px auto 60px; padding:0 12px; display:block;}
+    .review-banner{border:1px solid #ffcf66; background:#fff7e6; padding:10px 12px; border-radius:4px; margin:0 0 10px; color:#7a4b00;}
+    .review-banner strong{display:inline-block; margin-right:8px;}
+
+    .tabs{display:flex; gap:12px; align-items:flex-end; border-bottom:2px solid var(--line); margin:8px 0 12px; padding:0 2px;}
+    .tab{appearance:none; background:none; border:0; padding:8px 10px; font-weight:700; color:var(--link); cursor:pointer; border-bottom:3px solid transparent;}
+    .tab[aria-selected="true"]{color:#000; border-bottom-color:var(--muni-blue);}
+    [role="tabpanel"]{margin-top:10px;}
+    [hidden]{display:none !important;}
+
+    .box{border:1px solid var(--line); background:var(--panel); border-radius:2px; padding:12px; margin-bottom:12px;}
+    .box h2{margin:0 0 6px; font-size:16px;}
+    .sub{color:var(--muted); margin:2px 0 10px;}
+    .explain{border:1px dashed var(--line); color:#3f3f3f; background:#fafafa; padding:8px 10px; margin:8px 0 12px;}
+
+    .outputs{list-style:none; padding:0; margin:0; display:grid; gap:8px;}
+    .outputs li{border:1px solid var(--line); border-radius:2px; padding:10px; background:#fff;}
+    .row{display:grid; grid-template-columns: 1.2fr 1fr; gap:12px; align-items:center;}
+    @media (max-width: 720px){ .row{grid-template-columns:1fr; gap:8px;} }
+    .scale{display:grid; gap:6px;}
+    input[type="range"]{ -webkit-appearance:none; appearance:none; width:100%; height:4px; background:var(--line); border-radius:999px; outline:none;}
+    input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:16px; height:16px; background:var(--muni-blue); border:2px solid #fff; border-radius:50%; box-shadow:0 1px 2px rgba(0,0,0,.15); margin-top:-6px; cursor:pointer; }
+    input[type="range"]::-moz-range-thumb{ width:16px; height:16px; background:var(--muni-blue); border:2px solid #fff; border-radius:50%; box-shadow:0 1px 2px rgba(0,0,0,.15); cursor:pointer;}
+    input[type="range"]::-moz-range-track{ height:4px; background:var(--line); border:none; border-radius:999px;}
+    .scale-legend{display:flex; justify-content:space-between; font-size:12px; color:var(--muted);}
+
+    .reflexe{margin-top:12px; display:grid; gap:6px;}
+    .reflexe label{font-weight:700;}
+    .reflexe textarea{width:100%; min-height:110px; resize:vertical; padding:.6rem .7rem; border:1px solid var(--line); border-radius:2px; font:inherit;}
+    .attach{display:grid; gap:4px; margin-top:8px;}
+    .attach label{font-weight:700;}
+    .hint{color:var(--muted); margin:0;}
+
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:4px 0 8px;}
+    .seg{display:flex; gap:4px; padding:3px; border:1px solid var(--line); border-radius:3px; background:#f3f4f6;}
+    .seg button{appearance:none; border:0; background:none; padding:6px 8px; border-radius:2px; cursor:pointer; font-weight:700; color:#333;}
+    .seg button[aria-pressed="true"]{background:#fff; border:1px solid var(--line);}
+    .filter{padding:6px 8px; border:1px solid var(--line); border-radius:2px; flex:1 0 220px;}
+
+    table{width:100%; border-collapse:collapse; background:#fff;}
+    thead th{border-bottom:2px solid var(--line); text-align:left; padding:8px 6px; font-weight:700; color:#111;}
+    tbody td{border-bottom:1px solid var(--line); padding:8px 6px; vertical-align:top;}
+    tbody tr:hover{background:#fafafa;}
+    .chip{display:inline-block; padding:2px 6px; background:var(--chip); border:1px solid var(--line); border-radius:12px;}
+    .btn-link{appearance:none; background:none; border:0; color:var(--link); cursor:pointer; text-decoration:underline; padding:0; font:inherit;}
+
+    dialog{width:min(720px,96vw); border:1px solid var(--line); border-radius:2px; padding:0;}
+    dialog header{padding:10px 12px; border-bottom:1px solid var(--line); font-weight:700;}
+    dialog .content{padding:12px;}
+    dialog .actions{display:flex; justify-content:flex-end; gap:8px; padding:10px 12px; border-top:1px solid var(--line);}
+    dialog form button{padding:6px 10px; border-radius:2px; border:1px solid var(--line); background:#fff; cursor:pointer;}
+    dialog::backdrop{background:rgba(0,0,0,.25);}
+
+    footer{max-width:1000px; margin:16px auto 48px; padding:0 12px; color:var(--muted);}
+
+    @media print{
+      .is-header, .crumbs, .tabs, .review-banner{display:none !important;}
+      [role="tabpanel"]{display:block !important;}
+      main{margin-top:0}
+      a{text-decoration:none; color:#000}
     }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,.15);
-      cursor: pointer; margin-top: -7px;
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,.15); cursor: pointer;
-    }
-    input[type="range"]::-moz-range-track { height:4px; background: var(--line); border: none; border-radius: 999px; }
-    .reflexe { margin-top:14px; display:grid; gap:6px; }
-    .reflexe label { font-weight:600; }
-    .reflexe textarea { width:100%; min-height:110px; resize:vertical; padding:.7rem .8rem; border:1px solid var(--line); border-radius:10px; font:inherit; }
-    /* Attachments */
-    .attach { margin-top:8px; display:grid; gap:6px; }
-    .attach label { font-weight:600; }
-    .attach input[type="file"] { font:inherit; }
-    .hint { color:var(--muted); font-size:.95rem; margin:0; }
-    footer.page { max-width:860px; margin:20px auto 48px; padding:0 16px; color:var(--muted); font-size:.95rem; }
-    @media print { body { background:#fff; } .card { break-inside:avoid; } }
   </style>
 </head>
 <body>
-  <header class="page">
-    <h1>Sebehodnocení – varianta se škálou</h1>
-    <p>Statický <strong>design</strong> obrazovky s posuvníkem <em>0–100&nbsp;%</em> za každým výstupem. Levý konec značí „(ještě) nezvládám“, pravý „úplně zvládám“.</p>
-  </header>
+  <div class="is-header">
+    <div class="container">
+      <div class="is-title">Masarykova univerzita – Informační systém</div>
+      <div class="is-sub">Sebehodnocení (prototyp náhledu)</div>
+    </div>
+  </div>
+  <div class="crumbs">
+    <div class="container">
+      <span><strong>Aplikace</strong></span><span class="sep">›</span><span>Sebehodnocení</span>
+    </div>
+  </div>
 
   <main>
-    <!-- PŘEDMĚT 1: Základy pedagogického myšlení (v6) -->
-    <section class="card subject" aria-labelledby="s1-title" aria-describedby="s1-explain">
-      <h2 id="s1-title">Základy pedagogického myšlení</h2>
-      <p class="sub">Semestr 1 • Výstupy k sebehodnocení</p>
-      <div class="explain" id="s1-explain">
-        <strong>Co znamená škála?</strong>
-        Posuň hodnotu podle míry zvládnutí daného výstupu v tomto semestru: <em>0&nbsp;% = (ještě) nezvládám</em>, <em>100&nbsp;% = úplně zvládám</em>.
-      </div>
-      <ul class="outputs" role="list">
-        <li>
-          <div class="row">
-            <div class="output-text">Porovnám tradiční a současné přístupy ke vzdělávání učitelů a uvedu příklady</div>
-            <div class="scale">
-              <input type="range" min="0" max="10" step="10" value="0" id="s1-o1" aria-label="Míra zvládnutí 0–100 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
+    <div class="review-banner" role="note">
+      <strong>Náhled pro testery / review:</strong> Záložky níže slouží pouze k demonstraci <em>pohledu studenta</em> a <em>pohledu vyučujícího</em> a <u>nebudou</u> součástí finálního produktu v IS MU.
+    </div>
+
+    <nav class="tabs" role="tablist" aria-label="Přepnutí náhledů">
+      <button class="tab" role="tab" id="tab-student" aria-controls="panel-student" aria-selected="true">Sebehodnocení (student)</button>
+      <button class="tab" role="tab" id="tab-teacher" aria-controls="panel-teacher" aria-selected="false">Pohled vyučujícího</button>
+    </nav>
+
+    <!-- STUDENT -->
+    <section id="panel-student" role="tabpanel" aria-labelledby="tab-student">
+      <section class="box">
+        <h2>Základy pedagogického myšlení</h2>
+        <p class="sub">Semestr 1 • Výstupy k sebehodnocení</p>
+        <div class="explain"><strong>Co znamená škála?</strong> Posuň hodnotu podle míry zvládnutí daného výstupu: <em>0 % = (ještě) nezvládám</em>, <em>100 % = úplně zvládám</em>.</div>
+        <ul class="outputs">
+          <li>
+            <div class="row">
+              <div>Porovnám tradiční a současné přístupy ke vzdělávání učitelů a uvedu příklady</div>
+              <div class="scale">
+                <input type="range" min="0" max="100" step="10" value="0" id="s1-o1" aria-label="Míra zvládnutí 0–100 %">
+                <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
+              </div>
             </div>
-          </div>
-        </li>
-        <li>
-          <div class="row">
-            <div class="output-text">Ověřím si své znalosti formou kvízu zaměřeného na školskou legislativu</div>
-            <div class="scale">
-              <input type="range" min="0" max="100" step="10" value="0" id="s1-o2" aria-label="Míra zvládnutí 0–100 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
+          </li>
+          <li>
+            <div class="row">
+              <div>Ověřím si své znalosti formou kvízu zaměřeného na školskou legislativu</div>
+              <div class="scale">
+                <input type="range" min="0" max="100" step="10" value="0" id="s1-o2" aria-label="Míra zvládnutí 0–100 %">
+                <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
+              </div>
             </div>
-          </div>
-        </li>
-        <li>
-          <div class="row">
-            <div class="output-text">Vypracuji volnou úvahu o ideálním učiteli /učitelce a pojmenuji jaké kompetence považuji v pedagogické profesi za klíčové</div>
-            <div class="scale">
-              <input type="range" min="0" max="100" step="10" value="0" id="s1-o3" aria-label="Míra zvládnutí 0–100 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
+          </li>
+          <li>
+            <div class="row">
+              <div>Vypracuji volnou úvahu o ideálním učiteli /učitelce a pojmenuji jaké kompetence považuji v pedagogické profesi za klíčové</div>
+              <div class="scale">
+                <input type="range" min="0" max="100" step="10" value="0" id="s1-o3" aria-label="Míra zvládnutí 0–100 %">
+                <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
+              </div>
             </div>
-          </div>
-        </li>
-        <li>
-          <div class="row">
-            <div class="output-text">Uvedu konkrétní příklady jak naplňuji jednotlivé oblasti profesních kompetencí</div>
-            <div class="scale">
-              <input type="range" min="0" max="100" step="10" value="0" id="s1-o4" aria-label="Míra zvládnutí 0–100 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
+          </li>
+          <li>
+            <div class="row">
+              <div>Uvedu konkrétní příklady jak naplňuji jednotlivé oblasti profesních kompetencí</div>
+              <div class="scale">
+                <input type="range" min="0" max="100" step="10" value="0" id="s1-o4" aria-label="Míra zvládnutí 0–100 %">
+                <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
+              </div>
             </div>
+          </li>
+        </ul>
+        <div class="reflexe">
+          <label for="s1-r">Stručně zdůvodni, jak jsi pracoval(a) na těchto výstupech (volitelné)</label>
+          <textarea id="s1-r" placeholder="Např. Jaké aktivity, úkoly nebo praxe k naplnění výstupů pomohly? Co bys příště udělal/a jinak?"></textarea>
+          <div class="attach">
+            <label for="s1-file">Přiložit podklady (volitelné)</label>
+            <input type="file" id="s1-file" aria-describedby="s1-file-desc">
+            <p class="hint" id="s1-file-desc">Možnost přiložit podklady k výstupům pro portfolio.</p>
           </div>
-        </li>
-      </ul>
-      <div class="reflexe">
-        <label for="s1-r">Stručně zdůvodni, jak jsi pracoval(a) na těchto výstupech <span aria-hidden="true">(volitelné)</span></label>
-        <textarea id="s1-r" placeholder="Např. Jaké aktivity, úkoly nebo praxe k naplnění výstupů pomohly? Co bys příště udělal/a jinak?"></textarea>
-        <div class="attach">
-          <label for="s1-file">Přiložit podklady <span aria-hidden="true">(volitelné)</span></label>
-          <input type="file" id="s1-file" aria-describedby="s1-file-desc">
-          <p class="hint" id="s1-file-desc">Možnost přiložit podklady k výstupům pro portfolio.</p>
         </div>
-      </div>
+      </section>
+
+      <section class="box">
+        <h2>Úvod do kognitivní a sociální psychologie</h2>
+        <p class="sub">Semestr 2 • Výstupy k sebehodnocení</p>
+        <div class="explain"><strong>Co znamená škála?</strong> Posuň hodnotu podle míry zvládnutí daného výstupu: <em>0 % = (ještě) nezvládám</em>, <em>100 % = úplně zvládám</em>.</div>
+        <ul class="outputs">
+          <li>
+            <div class="row">
+              <div>Student vysvětlí základní psychologické procesy a jejich vliv na učení žáků</div>
+              <div class="scale">
+                <input type="range" min="0" max="100" step="10" value="0" id="s2-o1" aria-label="Míra zvládnutí 0–100 %">
+                <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="row">
+              <div>Student vytváří bezpečné a podpůrné prostředí pro učení</div>
+              <div class="scale">
+                <input type="range" min="0" max="100" step="10" value="0" id="s2-o2" aria-label="Míra zvládnutí 0–100 %">
+                <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="row">
+              <div>Student reflektuje vliv sociálních faktorů na učení a skupinovou dynamiku</div>
+              <div class="scale">
+                <input type="range" min="0" max="100" step="10" value="0" id="s2-o3" aria-label="Míra zvládnutí 0–100 %">
+                <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="row">
+              <div>Jádrový výstup: Dokážu propojit poznatky o vnímání, paměti, pozornosti a emocích s konkrétními výukovými situacemi</div>
+              <div class="scale">
+                <input type="range" min="0" max="100" step="10" value="0" id="s2-o4" aria-label="Míra zvládnutí 0–100 %">
+                <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div class="reflexe">
+          <label for="s2-r">Stručně zdůvodni, jak jsi pracoval(a) na těchto výstupech (volitelné)</label>
+          <textarea id="s2-r" placeholder="Např. Jaké aktivity, úkoly nebo praxe k naplnění výstupů pomohly? Co bys příště udělal/a jinak?"></textarea>
+          <div class="attach">
+            <label for="s2-file">Přiložit podklady (volitelné)</label>
+            <input type="file" id="s2-file" aria-describedby="s2-file-desc">
+            <p class="hint" id="s2-file-desc">Možnost přiložit podklady k výstupům pro portfolio.</p>
+          </div>
+        </div>
+      </section>
     </section>
 
-    <!-- PŘEDMĚT 2: Úvod do kognitivní a sociální psychologie (v6) -->
-    <section class="card subject" aria-labelledby="s2-title" aria-describedby="s2-explain">
-      <h2 id="s2-title">Úvod do kognitivní a sociální psychologie</h2>
-      <p class="sub">Semestr 2 • Výstupy k sebehodnocení</p>
-      <div class="explain" id="s2-explain">
-        <strong>Co znamená škála?</strong>
-        Posuň hodnotu podle míry zvládnutí daného výstupu v tomto semestru: <em>0&nbsp;% = (ještě) nezvládám</em>, <em>100&nbsp;% = úplně zvládám</em>.
-      </div>
-      <ul class="outputs" role="list">
-        <li>
-          <div class="row">
-            <div class="output-text">Student vysvětlí základní psychologické procesy a jejich vliv na učení žáků</div>
-            <div class="scale">
-              <input type="range" min="0" max="100" step="10" value="0" id="s2-o1" aria-label="Míra zvládnutí 0–100 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
-            </div>
+    <!-- TEACHER -->
+    <section id="panel-teacher" role="tabpanel" aria-labelledby="tab-teacher" hidden>
+      <section class="box">
+        <h2>Pohled vyučujícího na sebehodnocení</h2>
+        <p class="muted">Škálová varianta: <em>počítá se „Celkové skóre“</em> jako průměr uvedených hodnot (0–100 %).</p>
+        <div class="toolbar">
+          <div class="seg" role="group" aria-label="Vybrat předmět">
+            <button type="button" aria-pressed="true" data-target="t-s1">Základy pedagogického myšlení</button>
+            <button type="button" aria-pressed="false" data-target="t-s2">Úvod do kognitivní a sociální psychologie</button>
           </div>
-        </li>
-        <li>
-          <div class="row">
-            <div class="output-text">Student vytváří bezpečné a podpůrné prostředí pro učení</div>
-            <div class="scale">
-              <input type="range" min="0" max="100" step="10" value="0" id="s2-o2" aria-label="Míra zvládnutí 0–100 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="row">
-            <div class="output-text">Student reflektuje vliv sociálních faktorů na učení a skupinovou dynamiku</div>
-            <div class="scale">
-              <input type="range" min="0" max="100" step="10" value="0" id="s2-o3" aria-label="Míra zvládnutí 0–100 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="row">
-            <div class="output-text">Jádrový výstup: Dokážu propojit poznatky o vnímání, paměti, pozornosti a emocích s konkrétními výukovými situacemi</div>
-            <div class="scale">
-              <input type="range" min="0" max="100" step="10" value="0" id="s2-o4" aria-label="Míra zvládnutí 0–100 %">
-              <div class="scale-legend"><span>0&nbsp;% • (ještě) nezvládám</span><span>100&nbsp;% • úplně zvládám</span></div>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="reflexe">
-        <label for="s2-r">Stručně zdůvodni, jak jsi pracoval(a) na těchto výstupech <span aria-hidden="true">(volitelné)</span></label>
-        <textarea id="s2-r" placeholder="Např. Jaké aktivity, úkoly nebo praxe k naplnění výstupů pomohly? Co bys příště udělal/a jinak?"></textarea>
-        <div class="attach">
-          <label for="s2-file">Přiložit podklady <span aria-hidden="true">(volitelné)</span></label>
-          <input type="file" id="s2-file" aria-describedby="s2-file-desc">
-          <p class="hint" id="s2-file-desc">Možnost přiložit podklady k výstupům pro portfolio.</p>
+          <input id="filter" class="filter" type="search" placeholder="Hledat podle UČO / jména">
         </div>
-      </div>
+
+        <div id="t-s1">
+          <table aria-label="Seznam studentů – ZPM">
+            <thead><tr><th>UČO</th><th>Jméno</th><th>Příjmení</th><th>Hodnoceno výstupů</th><th>Hodnocení (0–100 %)</th><th>Zdůvodnění</th><th>Celkové skóre</th></tr></thead>
+            <tbody>
+              <tr data-uco="123456" data-name="Jana" data-surname="Nováková" data-scores="70,85,60,90" data-reason="U psaní úvahy jsem čerpala z praxe a reflektovala rozdíly mezi přístupy.">
+                <td>123456</td><td>Jana</td><td>Nováková</td><td>4</td><td><span class="chip">70, 85, 60, 90</span></td><td><button class="btn-link reason">Zobrazit</button></td><td class="score">—</td>
+              </tr>
+              <tr data-uco="234567" data-name="Petr" data-surname="Svoboda" data-scores="40,50,45,55" data-reason="K jednotlivým výstupům jsem doplnil krátké shrnutí a odkazy na portfolio.">
+                <td>234567</td><td>Petr</td><td>Svoboda</td><td>4</td><td><span class="chip">40, 50, 45, 55</span></td><td><button class="btn-link reason">Zobrazit</button></td><td class="score">—</td>
+              </tr>
+              <tr data-uco="345678" data-name="Eliška" data-surname="Dvořáková" data-scores="95,90,100,85" data-reason="Reflexe je v příloze, shrnutí k výstupům mám u každé aktivity.">
+                <td>345678</td><td>Eliška</td><td>Dvořáková</td><td>4</td><td><span class="chip">95, 90, 100, 85</span></td><td><button class="btn-link reason">Zobrazit</button></td><td class="score">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="t-s2" hidden>
+          <table aria-label="Seznam studentů – ÚKSP">
+            <thead><tr><th>UČO</th><th>Jméno</th><th>Příjmení</th><th>Hodnoceno výstupů</th><th>Hodnocení (0–100 %)</th><th>Zdůvodnění</th><th>Celkové skóre</th></tr></thead>
+            <tbody>
+              <tr data-uco="123456" data-name="Jana" data-surname="Nováková" data-scores="80,85,75,90" data-reason="V aktivitách k sociální psychologii jsem popisovala konkrétní situace z praxe.">
+                <td>123456</td><td>Jana</td><td>Nováková</td><td>4</td><td><span class="chip">80, 85, 75, 90</span></td><td><button class="btn-link reason">Zobrazit</button></td><td class="score">—</td>
+              </tr>
+              <tr data-uco="234567" data-name="Petr" data-surname="Svoboda" data-scores="55,60,65,70" data-reason="Reflexi jsem doplnil o poznámky k emoční regulační strategii ve třídě.">
+                <td>234567</td><td>Petr</td><td>Svoboda</td><td>4</td><td><span class="chip">55, 60, 65, 70</span></td><td><button class="btn-link reason">Zobrazit</button></td><td class="score">—</td>
+              </tr>
+              <tr data-uco="345678" data-name="Eliška" data-surname="Dvořáková" data-scores="92,88,96,90" data-reason="Rozpracovala jsem vliv skupinových rolí na kooperativní učení.">
+                <td>345678</td><td>Eliška</td><td>Dvořáková</td><td>4</td><td><span class="chip">92, 88, 96, 90</span></td><td><button class="btn-link reason">Zobrazit</button></td><td class="score">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 
-  <footer class="page">
-    <p>Ukázka vzhledu (bez ukládání a logiky). Lze ji vložit do aplikace a napojit na vaše data.</p>
+  <dialog id="dlg">
+    <header>Textové zdůvodnění studenta</header>
+    <div class="content" id="dlg-body"></div>
+    <div class="actions"><form method="dialog"><button>Zavřít</button></form></div>
+  </dialog>
+
+  <footer>
+    <p>Tento prototyp je určen pouze k recenzi a testování v rámci IS MU (záložky nejsou součástí finálního produktu).</p>
   </footer>
+
+  <script>
+    // Tabs
+    const tabs = document.querySelectorAll('.tab');
+    const panels = { 'tab-student': document.getElementById('panel-student'), 'tab-teacher': document.getElementById('panel-teacher') };
+    tabs.forEach(btn => btn.addEventListener('click', () => {
+      tabs.forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+      Object.values(panels).forEach(p => p.hidden = true);
+      panels[btn.id].hidden = false;
+    }));
+
+    // Segment switch
+    const seg = document.querySelector('.seg');
+    const tables = { 't-s1': document.getElementById('t-s1'), 't-s2': document.getElementById('t-s2') };
+    seg?.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-target]'); if (!b) return;
+      seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed','false'));
+      b.setAttribute('aria-pressed','true');
+      Object.values(tables).forEach(t => t.hidden = true);
+      tables[b.dataset.target].hidden = false;
+      document.getElementById('filter').value = '';
+      filterRows(tables[b.dataset.target], '');
+    });
+
+    // Filter
+    const filterInput = document.getElementById('filter');
+    const activeTable = () => (!tables['t-s1'].hidden ? tables['t-s1'] : tables['t-s2']);
+    const filterRows = (wrap, term) => {
+      wrap.querySelectorAll('tbody tr').forEach(tr => {
+        const hay = (tr.dataset.uco + ' ' + tr.dataset.name + ' ' + tr.dataset.surname).toLowerCase();
+        tr.style.display = hay.includes(term) ? '' : 'none';
+      });
+    };
+    filterInput?.addEventListener('input', () => filterRows(activeTable(), filterInput.value.trim().toLowerCase()));
+
+    // Average score
+    function avg(a){ return a.reduce((x,y)=>x+y,0)/a.length; }
+    function updateScores(scope){
+      scope.querySelectorAll('tbody tr').forEach(tr => {
+        const nums = (tr.dataset.scores||'').split(',').map(s=>parseFloat(s)).filter(n=>!Number.isNaN(n));
+        const cell = tr.querySelector('.score');
+        if(nums.length){ cell.textContent = Math.round(avg(nums)) + ' %'; } else { cell.textContent = '—'; }
+      });
+    }
+    updateScores(document);
+
+    // Reason dialog
+    const dlg = document.getElementById('dlg');
+    document.body.addEventListener('click', (e) => {
+      const btn = e.target.closest('button.reason'); if (!btn) return;
+      const tr = btn.closest('tr');
+      document.getElementById('dlg-body').textContent = tr?.dataset?.reason || '—';
+      try { dlg.showModal(); } catch(e){ dlg.show(); }
+    });
+  </script>
 </body>
 </html>
