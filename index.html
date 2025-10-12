@@ -176,6 +176,191 @@
   .journal h3{margin:0 0 4px 0;font-size:16px}
   .journal .note{min-height:160px}
 
+
+/* ===== IS MU skin overrides (design-only, content unchanged) ===== */
+:root{
+  --is-navy:#003e7e;      /* IS MU dark bar */
+  --is-navy-600:#2b4f8f;  /* hover/active tint */
+  --is-border:#d9e0ea;    /* pale borders */
+  --is-bg:#ffffff;        /* white canvas typical for IS */
+  --is-muted:#5f6b7a;
+}
+html, body{ background:var(--is-bg); }
+header{
+  background:#ffffff !important;
+  color:#102a43 !important;
+  padding:14px 16px !important;
+  border-bottom:4px solid var(--is-navy) !important;
+}
+header h1{ font-weight:700 !important; color:#0f172a !important; font-size:clamp(18px,2vw,24px) !important; }
+header p{ color:var(--is-muted) !important; margin-top:6px !important; }
+
+/* Container width a bit tighter, as in IS */
+.wrap{ max-width:1120px !important; }
+
+/* Top navigation (tabs) -> IS dark bar */
+.tabs{
+  background:var(--is-navy) !important;
+  padding:0 6px !important;
+  border-radius:6px !important;
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.06) !important;
+  gap:0 !important;
+}
+.tab-btn{
+  border:none !important;
+  background:transparent !important;
+  border-radius:0 !important;
+  color:#d6e1f0 !important;
+  padding:12px 14px !important;
+  box-shadow:none !important;
+  position:relative;
+}
+.tab-btn:hover{ color:#ffffff !important; }
+.tab-btn[aria-selected="true"]{
+  color:#ffffff !important;
+}
+.tab-btn[aria-selected="true"]::after{
+  content:"";
+  position:absolute; left:10px; right:10px; bottom:-2px;
+  height:3px; background:#a7c7ff; border-radius:2px;
+}
+
+/* Toolbar aligns with IS (flat buttons/chips) */
+.toolbar{ margin-top:8px !important; }
+.toolbar .chip{
+  background:#f3f6fb !important;
+  border:1px solid var(--is-border) !important;
+  color:#1f2937 !important;
+}
+.btn{
+  background:#ffffff !important;
+  border:1px solid var(--is-border) !important;
+  border-radius:6px !important;
+  padding:8px 12px !important;
+  box-shadow:none !important;
+}
+.btn:hover{ border-color:#c7cfda !important; background:#f9fbff !important; }
+
+/* Help box */
+.help{
+  background:#f6f8fb !important;
+  border:1px solid var(--is-border) !important;
+  color:#334155 !important;
+  border-radius:6px !important;
+}
+
+/* Cards flat & subtle */
+.card{
+  border:1px solid var(--is-border) !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+  padding:12px !important;
+}
+.card h3{ font-size:15px !important; }
+
+/* Badges – keep area colors, but tone typography */
+.badge{ font-weight:700 !important; border-radius:4px !important; }
+
+/* Area separators – thinner */
+.area-divider{ height:8px !important; margin:8px 0 10px !important; }
+
+/* Inputs: textarea fits column (fix overflow); IS-like focus */
+.note{
+  box-sizing:border-box !important;
+  width:100% !important; max-width:100% !important;
+  border:1px solid var(--is-border) !important;
+  border-radius:6px !important;
+  padding:10px 12px !important;
+}
+.note:focus{ outline:2px solid #a7c7ff !important; border-color:#a7c7ff !important; }
+
+/* Range slider styling (IS-like) */
+.scale input[type="range"]{
+  -webkit-appearance:none; appearance:none;
+  width:260px !important; height:22px; background:transparent; margin:10px 4px;
+}
+.scale input[type="range"]::-webkit-slider-runnable-track{
+  height:4px; background:#d8e0ec; border-radius:999px;
+}
+.scale input[type="range"]::-moz-range-track{
+  height:4px; background:#d8e0ec; border-radius:999px;
+}
+.scale input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none;
+  width:18px; height:18px; background:#ffffff; border:3px solid var(--is-navy);
+  border-radius:50%; margin-top:-7px; box-shadow:0 0 0 2px #ffffff inset;
+}
+.scale input[type="range"]::-moz-range-thumb{
+  width:18px; height:18px; background:#ffffff; border:3px solid var(--is-navy); border-radius:50%;
+}
+.pill{ border:1px solid var(--is-border) !important; border-radius:6px !important; }
+
+/* Anchors (verbální kotvy) */
+.anchors{
+  background:#f7f9fc !important;
+  border:1px dashed #cfd7e3 !important;
+  border-radius:6px !important;
+}
+
+/* KPI boxes */
+.kpi .box{
+  border:1px solid var(--is-border) !important;
+  border-radius:8px !important;
+  background:#fff !important;
+}
+.box-left b{ font-size:16px !important; }
+.box-meta{ color:#6b7280 !important; }
+.bubbles{ gap:22px !important; }
+
+/* Legend row */
+.legend-row{
+  background:#f8faff !important;
+  border:1px solid var(--is-border) !important;
+  border-radius:6px !important;
+}
+.legend-chip{ border-color:var(--is-border) !important; background:#fff !important; }
+
+/* Tables */
+.table{
+  border:1px solid var(--is-border) !important;
+  border-radius:8px !important;
+}
+.table th{
+  background:#f7f9fc !important;
+  color:#0f172a !important;
+  font-weight:600 !important;
+}
+.table td, .table th{ border-bottom:1px solid var(--is-border) !important; }
+.table.a2-outline{ border-left:4px solid var(--area2) !important; }
+.table.a3-outline{ border-left:4px solid var(--area3) !important; }
+.table.a4-outline{ border-left:4px solid var(--area4) !important; }
+.table.a5-outline{ border-left:4px solid var(--area5) !important; }
+.table.a6-outline{ border-left:4px solid var(--area6) !important; }
+
+/* Journal (semester diary) card */
+.journal{ border-left:4px solid var(--is-navy) !important; }
+.journal h3{ font-size:15px !important; margin-bottom:2px !important; }
+.journal .note{ min-height:148px !important; }
+
+/* Density & whitespace to match IS */
+.row{ gap:8px !important; }
+.grid{ gap:10px !important; grid-template-columns:repeat(auto-fill,minmax(420px,1fr)) !important; }
+
+/* Sticky summary: reduce spacing */
+.sticky-summary{ padding:8px 0 12px !important; background:#fff !important; }
+
+/* Bubble look (blue-grey) – keep palette, but softer borders */
+.bubble{ border-color:#cfd7e3 !important; }
+.level0{ background:var(--b0) !important; }
+.level1{ background:var(--b1) !important; }
+.level2{ background:var(--b2) !important; }
+.level3{ background:var(--b3) !important; }
+
+/* Print keeps IS white background */
+@media print{
+  body{ background:#fff !important; }
+}
+
 </style>
 </head>
 <body>
