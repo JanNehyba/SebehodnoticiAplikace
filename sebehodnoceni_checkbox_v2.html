@@ -25,6 +25,19 @@
     }
     a{color:var(--link); text-decoration:underline;}
     a:hover{text-decoration:none}
+
+    /* ===== Tester-only top bar with tabs (outside of the IS design) ===== */
+    .tester-bar{background:#f2f2f5; border-bottom:1px dashed #cfd6e2;}
+    .tester-bar .wrap{max-width:1000px; margin:0 auto; padding:8px 12px;}
+    .tester-notice{border:1px solid #ffcf66; background:#fff7e6; color:#7a4b00; padding:8px 10px; border-radius:4px; text-align:center; margin:0 0 8px;}
+    .tester-tabs{display:flex; justify-content:center; gap:12px; padding:6px 0 10px;}
+    .tester-tabs .tab{
+      appearance:none; background:#fff; border:1px solid #dcdde2; border-radius:999px;
+      padding:6px 12px; font-weight:700; color:#333; cursor:pointer;
+    }
+    .tester-tabs .tab[aria-selected="true"]{background:#6c757d; color:#fff; border-color:#6c757d;}
+    @media print{ .tester-bar{display:none !important;} }
+
     /* Header */
     .is-header{background:var(--muni-blue); color:#fff;}
     .is-header .container{max-width:1000px; margin:0 auto; padding:10px 12px; display:flex; align-items:center; gap:12px;}
@@ -36,14 +49,6 @@
     .crumbs .sep{margin:0 6px; color:#999;}
     /* Page */
     main{max-width:1000px; margin:16px auto 60px; padding:0 12px; display:block;}
-    .review-banner{border:1px solid #ffcf66; background:#fff7e6; padding:10px 12px; border-radius:4px; margin:0 0 10px; color:#7a4b00;}
-    .review-banner strong{display:inline-block; margin-right:8px;}
-    /* Tabs (tester-only) */
-    .tabs{display:flex; gap:12px; align-items:flex-end; border-bottom:2px solid var(--line); margin:8px 0 12px; padding:0 2px;}
-    .tab{appearance:none; background:none; border:0; padding:8px 10px; font-weight:700; color:var(--link); cursor:pointer; border-bottom:3px solid transparent;}
-    .tab[aria-selected="true"]{color:#000; border-bottom-color:var(--muni-blue);}
-    [role="tabpanel"]{margin-top:10px;}
-    [hidden]{display:none !important;}
     /* Cards / boxes */
     .box{border:1px solid var(--line); background:var(--panel); border-radius:2px; padding:12px; margin-bottom:12px;}
     .box h2{margin:0 0 6px; font-size:16px;}
@@ -73,7 +78,7 @@
     tbody tr:hover{background:#fafafa;}
     .chip{display:inline-block; padding:2px 6px; background:var(--chip); border:1px solid var(--line); border-radius:12px;}
     .muted{color:var(--muted);}
-    .btn-link{appearance:none; background:none; border:0; color:var(--link); cursor:pointer; text-decoration:underline; padding:0; font:inherit;}
+    .btn-link{appearance:none; background:none; border:0; color:#0055A4; cursor:pointer; text-decoration:underline; padding:0; font:inherit;}
     /* Dialog */
     dialog{width:min(720px,96vw); border:1px solid var(--line); border-radius:2px; padding:0;}
     dialog header{padding:10px 12px; border-bottom:1px solid var(--line); font-weight:700;}
@@ -85,14 +90,28 @@
     footer{max-width:1000px; margin:16px auto 48px; padding:0 12px; color:var(--muted);}
     /* Print to PDF */
     @media print{
-      .is-header, .crumbs, .tabs, .review-banner{display:none !important;}
-      [role="tabpanel"]{display:block !important;}
-      main{margin-top:0}
+      .is-header, .crumbs{display:block !important;}
+      .tester-bar{display:none !important;}
       a{text-decoration:none; color:#000}
+      main{margin-top:0}
     }
   </style>
 </head>
 <body>
+
+  <!-- Tester-only top bar -->
+  <div class="tester-bar" role="note" aria-label="Náhledové záložky">
+    <div class="wrap">
+      <div class="tester-notice">
+        <strong>Náhled pro testery / review:</strong> Záložky nahoře slouží pouze k demonstraci <em>pohledu studenta</em> a <em>pohledu vyučujícího</em> a nebudou součástí finálního produktu v IS MU.
+      </div>
+      <nav class="tester-tabs" role="tablist" aria-label="Přepnutí náhledů">
+        <button class="tab" role="tab" id="tab-student" aria-controls="panel-student" aria-selected="true">Sebehodnocení (student)</button>
+        <button class="tab" role="tab" id="tab-teacher" aria-controls="panel-teacher" aria-selected="false">Pohled vyučujícího</button>
+      </nav>
+    </div>
+  </div>
+
   <div class="is-header">
     <div class="container">
       <div class="is-title">Masarykova univerzita – Informační systém</div>
@@ -101,20 +120,11 @@
   </div>
   <div class="crumbs">
     <div class="container">
-      <span><strong>Aplikace</strong></span><span class="sep">›</span><span>Sebehodnocení</span>
+      <span><strong>Předmět</strong></span><span class="sep">›</span><span>Sebehodnocení výstupů</span>
     </div>
   </div>
 
   <main>
-    <div class="review-banner" role="note">
-      <strong>Náhled pro testery / review:</strong> Záložky níže slouží pouze k demonstraci <em>pohledu studenta</em> a <em>pohledu vyučujícího</em> a <u>nebudou</u> součástí finálního produktu v IS MU.
-    </div>
-
-    <nav class="tabs" role="tablist" aria-label="Přepnutí náhledů">
-      <button class="tab" role="tab" id="tab-student" aria-controls="panel-student" aria-selected="true">Sebehodnocení (student)</button>
-      <button class="tab" role="tab" id="tab-teacher" aria-controls="panel-teacher" aria-selected="false">Pohled vyučujícího</button>
-    </nav>
-
     <!-- STUDENT -->
     <section id="panel-student" role="tabpanel" aria-labelledby="tab-student">
       <section class="box">

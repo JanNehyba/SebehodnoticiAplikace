@@ -19,6 +19,19 @@
     html,body{height:100%}
     body{ margin:0; background:var(--bg); color:var(--text); font:14px/1.45 Verdana, Arial, Helvetica, sans-serif;}
     a{color:var(--link); text-decoration:underline;} a:hover{text-decoration:none}
+
+    /* ===== Tester-only top bar with tabs (outside of the IS design) ===== */
+    .tester-bar{background:#f2f2f5; border-bottom:1px dashed #cfd6e2;}
+    .tester-bar .wrap{max-width:1000px; margin:0 auto; padding:8px 12px;}
+    .tester-notice{border:1px solid #ffcf66; background:#fff7e6; color:#7a4b00; padding:8px 10px; border-radius:4px; text-align:center; margin:0 0 8px;}
+    .tester-tabs{display:flex; justify-content:center; gap:12px; padding:6px 0 10px;}
+    .tester-tabs .tab{
+      appearance:none; background:#fff; border:1px solid #dcdde2; border-radius:999px;
+      padding:6px 12px; font-weight:700; color:#333; cursor:pointer;
+    }
+    .tester-tabs .tab[aria-selected="true"]{background:#6c757d; color:#fff; border-color:#6c757d;}
+    @media print{ .tester-bar{display:none !important;} }
+
     .is-header{background:var(--muni-blue); color:#fff;}
     .is-header .container{max-width:1000px; margin:0 auto; padding:10px 12px; display:flex; align-items:center; gap:12px;}
     .is-title{font-weight:700; letter-spacing:.02em;}
@@ -27,14 +40,6 @@
     .crumbs .container{max-width:1000px; margin:0 auto; padding:8px 12px; color:#444;}
     .crumbs .sep{margin:0 6px; color:#999;}
     main{max-width:1000px; margin:16px auto 60px; padding:0 12px; display:block;}
-    .review-banner{border:1px solid #ffcf66; background:#fff7e6; padding:10px 12px; border-radius:4px; margin:0 0 10px; color:#7a4b00;}
-    .review-banner strong{display:inline-block; margin-right:8px;}
-
-    .tabs{display:flex; gap:12px; align-items:flex-end; border-bottom:2px solid var(--line); margin:8px 0 12px; padding:0 2px;}
-    .tab{appearance:none; background:none; border:0; padding:8px 10px; font-weight:700; color:var(--link); cursor:pointer; border-bottom:3px solid transparent;}
-    .tab[aria-selected="true"]{color:#000; border-bottom-color:var(--muni-blue);}
-    [role="tabpanel"]{margin-top:10px;}
-    [hidden]{display:none !important;}
 
     .box{border:1px solid var(--line); background:var(--panel); border-radius:2px; padding:12px; margin-bottom:12px;}
     .box h2{margin:0 0 6px; font-size:16px;}
@@ -45,11 +50,15 @@
     .outputs li{border:1px solid var(--line); border-radius:2px; padding:10px; background:#fff;}
     .row{display:grid; grid-template-columns: 1.2fr 1fr; gap:12px; align-items:center;}
     @media (max-width: 720px){ .row{grid-template-columns:1fr; gap:8px;} }
+
     .scale{display:grid; gap:6px;}
+    .scale .value{font-size:12px; color:var(--muted); text-align:right;}
     input[type="range"]{ -webkit-appearance:none; appearance:none; width:100%; height:4px; background:var(--line); border-radius:999px; outline:none;}
+    input[type="range"].has-fill{ background:linear-gradient(to right, var(--muni-blue) 0%, var(--muni-blue) 0%, var(--line) 0%, var(--line) 100%); }
     input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:16px; height:16px; background:var(--muni-blue); border:2px solid #fff; border-radius:50%; box-shadow:0 1px 2px rgba(0,0,0,.15); margin-top:-6px; cursor:pointer; }
     input[type="range"]::-moz-range-thumb{ width:16px; height:16px; background:var(--muni-blue); border:2px solid #fff; border-radius:50%; box-shadow:0 1px 2px rgba(0,0,0,.15); cursor:pointer;}
     input[type="range"]::-moz-range-track{ height:4px; background:var(--line); border:none; border-radius:999px;}
+    input[type="range"]::-moz-range-progress{ height:4px; background:var(--muni-blue); border:none; border-radius:999px; }
     .scale-legend{display:flex; justify-content:space-between; font-size:12px; color:var(--muted);}
 
     .reflexe{margin-top:12px; display:grid; gap:6px;}
@@ -70,7 +79,7 @@
     tbody td{border-bottom:1px solid var(--line); padding:8px 6px; vertical-align:top;}
     tbody tr:hover{background:#fafafa;}
     .chip{display:inline-block; padding:2px 6px; background:var(--chip); border:1px solid var(--line); border-radius:12px;}
-    .btn-link{appearance:none; background:none; border:0; color:var(--link); cursor:pointer; text-decoration:underline; padding:0; font:inherit;}
+    .btn-link{appearance:none; background:none; border:0; color:#0055A4; cursor:pointer; text-decoration:underline; padding:0; font:inherit;}
 
     dialog{width:min(720px,96vw); border:1px solid var(--line); border-radius:2px; padding:0;}
     dialog header{padding:10px 12px; border-bottom:1px solid var(--line); font-weight:700;}
@@ -82,14 +91,28 @@
     footer{max-width:1000px; margin:16px auto 48px; padding:0 12px; color:var(--muted);}
 
     @media print{
-      .is-header, .crumbs, .tabs, .review-banner{display:none !important;}
-      [role="tabpanel"]{display:block !important;}
+      .is-header, .crumbs{display:block !important;}
+      .tester-bar{display:none !important;}
       main{margin-top:0}
       a{text-decoration:none; color:#000}
     }
   </style>
 </head>
 <body>
+
+  <!-- Tester-only top bar -->
+  <div class="tester-bar" role="note" aria-label="Náhledové záložky">
+    <div class="wrap">
+      <div class="tester-notice">
+        <strong>Náhled pro testery / review:</strong> Záložky nahoře slouží pouze k demonstraci <em>pohledu studenta</em> a <em>pohledu vyučujícího</em> a nebudou součástí finálního produktu v IS MU.
+      </div>
+      <nav class="tester-tabs" role="tablist" aria-label="Přepnutí náhledů">
+        <button class="tab" role="tab" id="tab-student" aria-controls="panel-student" aria-selected="true">Sebehodnocení (student)</button>
+        <button class="tab" role="tab" id="tab-teacher" aria-controls="panel-teacher" aria-selected="false">Pohled vyučujícího</button>
+      </nav>
+    </div>
+  </div>
+
   <div class="is-header">
     <div class="container">
       <div class="is-title">Masarykova univerzita – Informační systém</div>
@@ -98,32 +121,24 @@
   </div>
   <div class="crumbs">
     <div class="container">
-      <span><strong>Aplikace</strong></span><span class="sep">›</span><span>Sebehodnocení</span>
+      <span><strong>Předmět</strong></span><span class="sep">›</span><span>Sebehodnocení výstupů</span>
     </div>
   </div>
 
   <main>
-    <div class="review-banner" role="note">
-      <strong>Náhled pro testery / review:</strong> Záložky níže slouží pouze k demonstraci <em>pohledu studenta</em> a <em>pohledu vyučujícího</em> a <u>nebudou</u> součástí finálního produktu v IS MU.
-    </div>
-
-    <nav class="tabs" role="tablist" aria-label="Přepnutí náhledů">
-      <button class="tab" role="tab" id="tab-student" aria-controls="panel-student" aria-selected="true">Sebehodnocení (student)</button>
-      <button class="tab" role="tab" id="tab-teacher" aria-controls="panel-teacher" aria-selected="false">Pohled vyučujícího</button>
-    </nav>
-
     <!-- STUDENT -->
     <section id="panel-student" role="tabpanel" aria-labelledby="tab-student">
       <section class="box">
         <h2>Základy pedagogického myšlení</h2>
         <p class="sub">Semestr 1 • Výstupy k sebehodnocení</p>
-        <div class="explain"><strong>Co znamená škála?</strong> Posuň hodnotu podle míry zvládnutí daného výstupu: <em>0 % = (ještě) nezvládám</em>, <em>100 % = úplně zvládám</em>.</div>
+        <div class="explain"><strong>Rámovací otázka:</strong> Jak si stojíš právě teď? Posuň ukazatel podle <em>aktuální</em> míry zvládnutí daného výstupu (0–100 %).</div>
         <ul class="outputs">
           <li>
             <div class="row">
               <div>Porovnám tradiční a současné přístupy ke vzdělávání učitelů a uvedu příklady</div>
               <div class="scale">
                 <input type="range" min="0" max="100" step="10" value="0" id="s1-o1" aria-label="Míra zvládnutí 0–100 %">
+                <div class="value" aria-live="polite">0 %</div>
                 <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
               </div>
             </div>
@@ -133,6 +148,7 @@
               <div>Ověřím si své znalosti formou kvízu zaměřeného na školskou legislativu</div>
               <div class="scale">
                 <input type="range" min="0" max="100" step="10" value="0" id="s1-o2" aria-label="Míra zvládnutí 0–100 %">
+                <div class="value" aria-live="polite">0 %</div>
                 <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
               </div>
             </div>
@@ -142,6 +158,7 @@
               <div>Vypracuji volnou úvahu o ideálním učiteli /učitelce a pojmenuji jaké kompetence považuji v pedagogické profesi za klíčové</div>
               <div class="scale">
                 <input type="range" min="0" max="100" step="10" value="0" id="s1-o3" aria-label="Míra zvládnutí 0–100 %">
+                <div class="value" aria-live="polite">0 %</div>
                 <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
               </div>
             </div>
@@ -151,6 +168,7 @@
               <div>Uvedu konkrétní příklady jak naplňuji jednotlivé oblasti profesních kompetencí</div>
               <div class="scale">
                 <input type="range" min="0" max="100" step="10" value="0" id="s1-o4" aria-label="Míra zvládnutí 0–100 %">
+                <div class="value" aria-live="polite">0 %</div>
                 <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
               </div>
             </div>
@@ -170,13 +188,14 @@
       <section class="box">
         <h2>Úvod do kognitivní a sociální psychologie</h2>
         <p class="sub">Semestr 2 • Výstupy k sebehodnocení</p>
-        <div class="explain"><strong>Co znamená škála?</strong> Posuň hodnotu podle míry zvládnutí daného výstupu: <em>0 % = (ještě) nezvládám</em>, <em>100 % = úplně zvládám</em>.</div>
+        <div class="explain"><strong>Rámovací otázka:</strong> Jak si stojíš právě teď? Posuň ukazatel podle <em>aktuální</em> míry zvládnutí daného výstupu (0–100 %).</div>
         <ul class="outputs">
           <li>
             <div class="row">
               <div>Student vysvětlí základní psychologické procesy a jejich vliv na učení žáků</div>
               <div class="scale">
                 <input type="range" min="0" max="100" step="10" value="0" id="s2-o1" aria-label="Míra zvládnutí 0–100 %">
+                <div class="value" aria-live="polite">0 %</div>
                 <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
               </div>
             </div>
@@ -186,6 +205,7 @@
               <div>Student vytváří bezpečné a podpůrné prostředí pro učení</div>
               <div class="scale">
                 <input type="range" min="0" max="100" step="10" value="0" id="s2-o2" aria-label="Míra zvládnutí 0–100 %">
+                <div class="value" aria-live="polite">0 %</div>
                 <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
               </div>
             </div>
@@ -195,6 +215,7 @@
               <div>Student reflektuje vliv sociálních faktorů na učení a skupinovou dynamiku</div>
               <div class="scale">
                 <input type="range" min="0" max="100" step="10" value="0" id="s2-o3" aria-label="Míra zvládnutí 0–100 %">
+                <div class="value" aria-live="polite">0 %</div>
                 <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
               </div>
             </div>
@@ -204,6 +225,7 @@
               <div>Jádrový výstup: Dokážu propojit poznatky o vnímání, paměti, pozornosti a emocích s konkrétními výukovými situacemi</div>
               <div class="scale">
                 <input type="range" min="0" max="100" step="10" value="0" id="s2-o4" aria-label="Míra zvládnutí 0–100 %">
+                <div class="value" aria-live="polite">0 %</div>
                 <div class="scale-legend"><span>0 % • (ještě) nezvládám</span><span>100 % • úplně zvládám</span></div>
               </div>
             </div>
@@ -315,7 +337,7 @@
     };
     filterInput?.addEventListener('input', () => filterRows(activeTable(), filterInput.value.trim().toLowerCase()));
 
-    // Average score
+    // Average score (teacher table)
     function avg(a){ return a.reduce((x,y)=>x+y,0)/a.length; }
     function updateScores(scope){
       scope.querySelectorAll('tbody tr').forEach(tr => {
@@ -325,6 +347,20 @@
       });
     }
     updateScores(document);
+
+    // Slider fill + live value
+    function setFill(el){
+      const v = parseInt(el.value,10) || 0;
+      el.style.background = 'linear-gradient(to right, var(--muni-blue) 0%, var(--muni-blue) ' + v + '%, var(--line) ' + v + '%, var(--line) 100%)';
+      const valEl = el.closest('.scale')?.querySelector('.value');
+      if(valEl){ valEl.textContent = v + ' %'; }
+    }
+    document.querySelectorAll('input[type="range"]').forEach(r => {
+      r.classList.add('has-fill');
+      setFill(r);
+      r.addEventListener('input', () => setFill(r));
+      r.addEventListener('change', () => setFill(r));
+    });
 
     // Reason dialog
     const dlg = document.getElementById('dlg');
