@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Standard kvality profesních kompetencí studenta učitelství</title>
+  <style>
+    :root{
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2e5aac;
+      --primary-contrast:#fff;
+      --bg:#ffffff;
+      --radius:6px;
+      --is-blue:#1f3a70;
+      --is-light:#f5f7fb;
+    }
+    * { box-sizing: border-box; }
+    html,body { height: 100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue",
+                   "Noto Sans", "Liberation Sans", Arial, "Apple Color Emoji",
+                   "Segoe UI Emoji";
+      background: var(--bg);
+      line-height:1.45;
+    }
+    .page{ max-width: 1060px; margin: 28px auto 56px; padding: 0 24px; }
+    .grid{ display:grid; grid-template-columns: 1.05fr 1.35fr; gap: 36px; align-items:start;}
+    h2{ font-size:20px; margin:0 0 12px;}
+    fieldset{ margin:0 0 6px; padding:0; border:none;}
+    .group{ padding:14px 0 10px; border-bottom:1px solid var(--border);}
+    .checklist{ display:grid; grid-template-columns:1fr; gap:6px;}
+    .checklist label{ display:flex; align-items:center; gap:8px; font-size:14px; color:#111827; cursor:pointer;}
+    .checklist input[type="checkbox"]{ width:16px; height:16px; accent-color:var(--primary);}
+    .area-title{ font-weight:700; font-size:14px; color:#0f172a; margin: 0 0 8px; }
+    .competence-label strong{ font-weight:600; }
+    .select{ position:relative; margin-bottom:10px;}
+    .select select, .select textarea{ width:100%; padding:10px 40px 10px 12px; font-size:14px; border:1px solid var(--border);
+                    border-radius:var(--radius); background:#fff; color:#111827; outline:none; }
+    .select select{ appearance:none; }
+    .select:after{ content:"▾"; position:absolute; right:12px; top:50%; transform:translateY(-50%);
+                   font-size:16px; color:#4b5563; pointer-events:none;}
+    .select.editing:after{ display:none; }
+    .select .editbar{ position:absolute; right:4px; top:4px; display:flex; gap:6px;}
+    .iconbtn{ border:1px solid var(--border); background:#fff; border-radius:4px; padding:4px 8px; font-size:12px; cursor:pointer; }
+    .actions{ display:flex; gap:10px; margin-top:12px;}
+    .btn{ display:inline-block; padding:8px 14px; font-size:14px; border-radius:var(--radius);
+          border:1px solid var(--primary); cursor:pointer; background:var(--primary); color:var(--primary-contrast);}
+    .btn.secondary{ background:#fff; color:var(--primary);}
+    .note{ margin-top:12px; color:var(--muted); font-size:12px;}
+    .panel{ padding-top:8px;}
+    /* Náhled – stylizace podle IS */
+    .preview{ display:none; background:var(--is-light); min-height:100vh; }
+    .preview .container{ max-width:1120px; margin:0 auto; padding:20px 18px 60px; }
+    .breadcrumb{ color:#2e7d32; font-size:13px; margin-bottom:6px; }
+    .page-title{ font-size:36px; color:#c7cbd4; font-weight:500; margin:6px 0 14px; }
+    .tabs{ background:var(--is-blue); color:#fff; display:flex; gap:20px; padding:10px 14px; font-size:13px; text-transform:uppercase; }
+    .tabs span{ opacity:.9; }
+    .box{ background:#fff; border:1px solid #cfd6e3; border-radius:3px; margin-top:16px; overflow:hidden; }
+    .box .box-hd{ background:#eef2f9; padding:10px 12px; font-weight:600; font-size:14px; color:#2c3f66; display:flex; justify-content:space-between; align-items:center; }
+    .box .box-bd{ padding:12px; }
+    .picked{ border:1px solid #d2d6de; border-radius:3px; background:#fff; }
+    .picked .row{ padding:10px; border-bottom:1px solid #e5e7eb; }
+    .picked .row:last-child{ border-bottom:0; }
+    .picked .faculty{ color:#1b6b3a; font-weight:600; }
+    .picked .term{ color:#4b5563; }
+    .picked ul{ margin:6px 0 0 18px; padding:0; }
+    .picked li{ list-style:disc; }
+    .picked-links{ color:#64748b; font-size:13px; display:flex; gap:16px; margin-top:8px; }
+    .picked-links a{ color:#64748b; text-decoration:none; }
+    table.infotab{ width:100%; border-collapse:collapse; margin-top:14px; background:#fff; border:1px solid #d2d6de; }
+    table.infotab th, table.infotab td{ border:1px solid #e5e7eb; vertical-align:top; padding:8px 10px; font-size:14px; }
+    table.infotab th.rowhd{ width:220px; background:#f3f4f6; color:#374151; font-weight:600; }
+    table.infotab td.subhd{ width:240px; font-weight:600; color:#111827; }
+    .preview .back{ margin-top:18px; }
+    .linklike{ color:#1b6b3a; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <main id="editPage" class="page">
+    <div class="grid">
+      <section class="panel">
+        <h2>Standard kvality profesních kompetencí studenta učitelství</h2>
+        <div id="areas"></div>
+        <div class="actions">
+          <button class="btn">Průběžné uložení</button>
+          <button class="btn secondary" id="btnPreview">Náhled</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Výstupy pro sebehodnocení</h2>
+        <div id="selects">
+          <div class="select"><select id="sel-1"></select><div class="editbar"><button class="iconbtn" data-edit-for="sel-1">Upravit</button></div></div>
+          <div class="select"><select id="sel-2"></select><div class="editbar"><button class="iconbtn" data-edit-for="sel-2">Upravit</button></div></div>
+          <div class="select"><select id="sel-3"></select><div class="editbar"><button class="iconbtn" data-edit-for="sel-3">Upravit</button></div></div>
+          <div class="select"><select id="sel-4"></select><div class="editbar"><button class="iconbtn" data-edit-for="sel-4">Upravit</button></div></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn">Průběžné uložení</button>
+          <button class="btn secondary" id="btnPreview2">Náhled</button>
+        </div>
+
+        <p class="note">
+          Texty vpravo jsou převzaté z přiloženého souboru (předmět <strong>SZ0004 Vývojová psychologie</strong>).
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Režim náhledu (kopie stránky IS) -->
+  <div id="previewPage" class="preview">
+    <div class="container">
+      <div class="breadcrumb">Katalog předmětů  &nbsp;›&nbsp;  Úplný výpis informací o předmětu a potvrzování správnosti</div>
+      <div class="page-title">Úplný výpis informací o předmětu a potvrzování správnosti</div>
+
+      <div class="tabs">
+        <span>VÝBĚR PŘEDMĚTŮ</span>
+        <span>OPERACE S PŘEDMĚTY / APLIKACE</span>
+        <span>OBDOBÍ</span>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">Vybrané předměty (1) <span>▾</span></div>
+        <div class="box-bd">
+          <div class="picked">
+            <div class="row faculty"><a href="#" class="linklike">Pedagogická fakulta</a></div>
+            <div class="row term">jaro 2025</div>
+            <div class="row">
+              <ul><li id="subjectLine">SZ0004 Vývojová psychologie</li></ul>
+            </div>
+          </div>
+          <div class="picked-links">
+            <a href="#">Vybrat jiné předměty</a>
+            <a href="#">Upravit výběr</a>
+            <a href="#">Seznam</a>
+          </div>
+        </div>
+      </div>
+
+      <table class="infotab" id="infoTable">
+        <tbody>
+          <tr>
+            <th class="rowhd">Předmět je dostupný</th>
+            <td colspan="2">pouze pro registraci studentů (ne pro Obchodní centrum)</td>
+          </tr>
+          <tr id="pk-row-start">
+            <th class="rowhd" rowspan="1">Pedagogické kompetence</th>
+            <td class="subhd">–</td>
+            <td>–</td>
+          </tr>
+          <!-- řádky za Pedagogické kompetence se doplní skriptem -->
+          <tr>
+            <th class="rowhd">Výstupy pro sebehodnocení</th>
+            <td colspan="2" id="outcomesCell"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="back">
+        <button class="btn secondary" id="btnBack">Zpět k úpravám</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Data z XLSX a JSONu:
+    const AREAS = [{"title": "1. Oborové kompetence", "competences": [{"code": "1.1", "name": "XXX"}, {"code": "1.2", "name": "XXX"}]}, {"title": "2. Plánování výuky", "competences": [{"code": "2.1", "name": "Nastavuji cíle výuky"}, {"code": "2.2", "name": "Plánuji metody, formy a didaktické prostředky výuky"}, {"code": "2.3", "name": "Plánuji rozvržení času"}, {"code": "2.4", "name": "Individualizuji plán výuky"}]}, {"title": "3. Podmínky pro učení", "competences": [{"code": "3.1", "name": "Buduji prostředí důvěry"}, {"code": "3.2", "name": "Udržuji bezpečné prostředí"}, {"code": "3.3", "name": "Spoluutvářím s žáky prostředí podporující jejich učení"}]}, {"title": "4. Podpora učení", "competences": [{"code": "4.1", "name": "Zprostředkovávám výukové cíle a ověřuji je"}, {"code": "4.2", "name": "Pracuji s obsahem a významem učiva"}, {"code": "4.3", "name": "Využívám výukové strategie podporující učení žáků"}]}, {"title": "5. ZV a hodnocení", "competences": [{"code": "5.1", "name": "Poskytuji žákům průběžnou popisnou zpětnou vazbu"}, {"code": "5.2", "name": "Ověřuji výukové cíle různými metodami a formami"}, {"code": "5.3", "name": "Vytvářím příležitost pro zapojení žáků do hodnocení"}]}, {"title": "6. Profesní rozvoj", "competences": [{"code": "6.1", "name": "Spolupracuji s ostatními"}, {"code": "6.2", "name": "Plánuji a realizuji svůj profesní rozvoj"}, {"code": "6.3", "name": "Pečuji o sebe"}]}];
+    const OUTCOMES = ["Orientovat se (orientuji se) ve východiscích současné vývojové psychologie, jejích specifických metodách a v principech psychického vývoje", "Orientovat se v reprezentativních vývojových teoriích, které mají přesah do pedagogických disciplín nebo přispívají k porozumění fungování osobnosti ve škole i v dospělém věku", "Prohloubit sebereflexi vlastního pojetí vývoje, potřeb a utváření prostředí příznivého pro vývoj ve škole", "Rozumět specifikům jednotlivých stadií ontogeneze lidské psychiky, znát vývojové možnosti i typické problémy jednotlivých fází ontogeneze"];
+
+    // Vykreslení levého panelu (výběr kompetencí)
+    const areasEl = document.getElementById('areas');
+    AREAS.forEach(area => {
+      const fs = document.createElement('fieldset');
+      fs.className = 'group';
+      const h = document.createElement('div');
+      h.className = 'area-title';
+      h.textContent = area.title;
+      fs.appendChild(h);
+      const list = document.createElement('div');
+      list.className = 'checklist';
+      area.competences.forEach(c => {
+        const label = document.createElement('label');
+        label.className = 'competence-label';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.dataset.area = area.title;
+        cb.dataset.code = c.code;
+        cb.dataset.name = c.name;
+        label.appendChild(cb);
+        const span = document.createElement('span');
+        span.innerHTML = '<strong>' + c.code + '.</strong> ' + c.name;
+        label.appendChild(span);
+        list.appendChild(label);
+      });
+      fs.appendChild(list);
+      areasEl.appendChild(fs);
+    });
+
+    // Naplnění selectů výstupy
+    const selects = [...document.querySelectorAll('#selects select')];
+    function fillSelects() {
+      selects.forEach((sel, idx) => {
+        sel.innerHTML = '';
+        const ph = document.createElement('option');
+        ph.value = '';
+        ph.textContent = 'Vyberte možnost';
+        ph.disabled = true;
+        sel.appendChild(ph);
+        OUTCOMES.forEach(text => {
+          const opt = document.createElement('option');
+          opt.value = text; opt.textContent = text; sel.appendChild(opt);
+        });
+        if (idx < 3 && OUTCOMES[idx]) sel.value = OUTCOMES[idx]; else { sel.value = ''; sel.selectedIndex = 0; }
+      });
+    }
+    fillSelects();
+
+    // Inline edit režim u selectů
+    function enableInlineEdit(button) {
+      const selId = button.getAttribute('data-edit-for');
+      const wrapper = button.closest('.select');
+      const select = document.getElementById(selId);
+      if (!select) return;
+      wrapper.classList.add('editing');
+      const ta = document.createElement('textarea');
+      ta.rows = 3;
+      ta.value = select.value || '';
+      wrapper.insertBefore(ta, wrapper.firstChild);
+      select.style.display = 'none';
+      wrapper.querySelector('.editbar').innerHTML = '';
+      const bSave = document.createElement('button'); bSave.className='iconbtn'; bSave.textContent='Uložit';
+      const bCancel = document.createElement('button'); bCancel.className='iconbtn'; bCancel.textContent='Zrušit';
+      const bReset = document.createElement('button'); bReset.className='iconbtn'; bReset.textContent='Reset';
+      wrapper.querySelector('.editbar').appendChild(bSave);
+      wrapper.querySelector('.editbar').appendChild(bCancel);
+      wrapper.querySelector('.editbar').appendChild(bReset);
+      bSave.addEventListener('click', () => {
+        const val = ta.value.trim();
+        if (val && ![...select.options].some(o => o.value === val)) {
+          const opt = document.createElement('option'); opt.value = val; opt.textContent = val; select.appendChild(opt);
+        }
+        select.value = val || '';
+        wrapper.classList.remove('editing'); select.style.display = ''; ta.remove();
+        wrapper.querySelector('.editbar').innerHTML = '<button class="iconbtn" data-edit-for="'+selId+'">Upravit</button>'; wireEditButtons();
+      });
+      bCancel.addEventListener('click', () => {
+        wrapper.classList.remove('editing'); select.style.display = ''; ta.remove();
+        wrapper.querySelector('.editbar').innerHTML = '<button class="iconbtn" data-edit-for="'+selId+'">Upravit</button>'; wireEditButtons();
+      });
+      bReset.addEventListener('click', () => { select.selectedIndex = 0; ta.value=''; });
+    }
+    function wireEditButtons(){ document.querySelectorAll('.iconbtn[data-edit-for]').forEach(btn => btn.onclick = () => enableInlineEdit(btn)); }
+    wireEditButtons();
+
+    // ====== Náhled ======
+    function buildPreview() {
+      // 1) Pedagogické kompetence: vybrané checkboxy seskupené podle oblasti
+      const checked = [...document.querySelectorAll('#areas input[type=checkbox]:checked')]
+        .map(cb => ({ area: cb.dataset.area, code: cb.dataset.code, name: cb.dataset.name }));
+      const tbody = document.querySelector('#infoTable tbody');
+      const start = document.getElementById('pk-row-start');
+      // odstranit staré dodané řádky
+      let node = start.nextElementSibling;
+      while (node && !node.querySelector('th.rowhd')) {
+        const next = node.nextElementSibling;
+        node.remove(); node = next;
+      }
+
+      const byArea = {};
+      checked.forEach(it => { if (!byArea[it.area]) byArea[it.area] = []; byArea[it.area].push(it); });
+      const areasList = Object.keys(byArea);
+      const rowspan = Math.max(areasList.length, 1);
+      start.querySelector('th.rowhd').setAttribute('rowspan', rowspan);
+
+      const setRow = (row, areaName, items) => {
+        row.children[1].className = 'subhd';
+        row.children[1].textContent = areaName ? areaName.replace(/^\d+\.\s*/, '') : '—';
+        row.children[2].innerHTML = items && items.length ? items.map(v => v.code + '. ' + v.name).join(', ') : '—';
+      };
+      setRow(start, areasList[0] || null, byArea[areasList[0]] || []);
+
+      for (let i=1;i<areasList.length;i++) {
+        const tr = document.createElement('tr');
+        const tdA = document.createElement('td'); tdA.className = 'subhd'; tdA.textContent = areasList[i].replace(/^\d+\.\s*/, '');
+        const tdB = document.createElement('td'); tdB.innerHTML = byArea[areasList[i]].map(v => v.code + '. ' + v.name).join(', ');
+        tr.appendChild(tdA); tr.appendChild(tdB);
+        tbody.insertBefore(tr, document.querySelector('#infoTable tbody tr:last-child'));
+      }
+
+      // 2) Výstupy pro sebehodnocení
+      const outVals = selects.map(s => s.value).filter(v => v && v.trim() !== '');
+      const outCell = document.getElementById('outcomesCell');
+      outCell.innerHTML = outVals.length ? outVals.join('<br>') : '<em>—</em>';
+    }
+
+    function showPreview() { buildPreview(); document.getElementById('editPage').style.display='none'; document.getElementById('previewPage').style.display='block'; }
+    function hidePreview() { document.getElementById('editPage').style.display='block'; document.getElementById('previewPage').style.display='none'; }
+
+    document.getElementById('btnPreview').addEventListener('click', showPreview);
+    document.getElementById('btnPreview2').addEventListener('click', showPreview);
+    document.getElementById('btnBack').addEventListener('click', hidePreview);
+  </script>
+</body>
+</html>
