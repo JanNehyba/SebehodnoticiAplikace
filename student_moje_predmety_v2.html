@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MUNI – Student / Moje předměty</title>
+<style>
+  :root{
+    --blue:#1f2f6f;      /* tmavší pruh */
+    --blue2:#2c4a8a;     /* aktivní tab */
+    --line:#e3e7ef;
+    --muted:#6b7280;
+    --text:#1f2937;
+    --tile:#e0e6ef;
+    --tile2:#f1f4f8;
+    --accent:#7c3aed;
+    --knob:#2f855a;
+    --tick:#bfc7d3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; color:var(--text);}
+  a{color:#2b6cb0; text-decoration:none}
+
+  /* top */
+  .top{display:flex; align-items:center; justify-content:space-between; padding:10px 18px; border-bottom:1px solid var(--line);}
+  .logo{font-size:30px; letter-spacing:6px; font-weight:800; color:#0b1736}
+  .user{font-size:13px; color:#6b7280}
+  .nav{background:var(--blue); color:#fff; display:flex; gap:24px; padding:10px 18px; font-size:14px;}
+  .nav .active{background:var(--blue2); padding:6px 10px; border-radius:3px;}
+  .search{display:flex; gap:8px; padding:12px 18px; align-items:center; border-bottom:1px solid var(--line);}
+  .search input{flex:1; padding:8px 12px; border:1px solid var(--line); border-radius:4px;}
+  h1.section{font-size:22px; font-weight:600; margin:10px 18px;}
+
+  .list{max-width:980px; margin:0 auto 48px;}
+  .card{border:1px solid #d1d5db; border-radius:6px; margin:14px 18px; overflow:hidden;}
+  .card-hd{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:#fff; cursor:pointer;}
+  .code{display:flex; align-items:center; gap:10px; font-weight:600;}
+  .badge{width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .title{font-weight:600}
+  .chev{color:#64748b}
+  .card-bd{display:none; border-top:1px solid var(--line); background:#fff;}
+  .card.open .card-bd{display:block;}
+  .row{display:flex; gap:16px; padding:12px 16px; align-items:center; background:#eef2f7;}
+  .row .tile{flex:1; background:var(--tile); padding:14px; text-align:center; border-radius:4px; color:#4b5563; font-weight:600;}
+  .row .tile.disabled{opacity:.7}
+  .quicklinks{padding:10px 16px; font-size:14px; color:#4b5563; border-top:1px solid #e5e7eb; background:#fff;}
+  .quicklinks a{color:#2d3748; margin-right:14px;}
+  .quicklinks a.highlight{font-weight:600; position:relative;}
+  .quicklinks a.highlight::after{content:'';position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:#c026d3;border-radius:50%;}
+
+  /* eval */
+  .eval-wrap{padding:18px 16px 8px; background:#fff; border-top:1px solid #e5e7eb;}
+  .eval-hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .eval-hd h2{font-size:18px; font-weight:600; margin:0;}
+  .eval-hd .pager{color:#6b7280; font-size:14px;}
+
+  .outcome{padding:20px 0; border-top:1px solid #edf0f5;}
+  .outcome:first-child{border-top:none;}
+  .outcome h3{font-size:15px; margin:0 0 12px; font-weight:600; color:#111827;}
+
+  .scale{display:grid; grid-template-columns: 140px 1fr auto auto; align-items:center; column-gap:12px; margin:6px 0 8px;}
+  .label-left{font-size:13px; color:#6b7280;}
+  .label-100{font-size:13px; color:#6b7280; margin-right:6px;}
+  .label-right{font-size:13px; font-weight:600; color:#6b7280;}
+
+  /* track + ticks */
+  .track{position:relative; height:28px; display:flex; align-items:center;}
+  input[type=range].slider{width:100%; background:transparent; -webkit-appearance:none; appearance:none; margin:0;}
+  /* track line */
+  .slider::-webkit-slider-runnable-track{height:2px; background:#d6dbe5; border-radius:2px;}
+  .slider::-moz-range-track{height:2px; background:#d6dbe5; border-radius:2px;}
+  /* knob - malý zelený puntík */
+  .slider::-webkit-slider-thumb{-webkit-appearance:none; width:12px; height:12px; border-radius:50%; background:var(--knob); border:2px solid #fff; box-shadow:0 0 0 1.5px var(--knob);}
+  .slider::-moz-range-thumb{width:12px; height:12px; border-radius:50%; background:var(--knob); border:2px solid #fff;}
+  /* tick circles */
+  .ticks{position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); display:flex; justify-content:space-between; pointer-events:none;}
+  .ticks span{width:12px; height:12px; border-radius:50%; border:1px solid var(--tick); background:#fff;}
+
+  .tick-labels{display:flex; justify-content:space-between; font-size:12px; color:#6b7280; margin-top:4px; padding-left:140px; padding-right:70px;}
+
+  .justify-label{font-weight:600; font-size:14px; margin:10px 0 6px; color:#374151;}
+  textarea.justify{width:100%; min-height:66px; border:1px solid #e5e7eb; border-radius:4px; padding:8px; font-size:14px;}
+  .upload{margin-top:10px; font-size:14px;}
+  .upload label{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border:1px dashed #9ca3af; border-radius:4px; color:#374151; cursor:pointer;}
+  .upload input[type=file]{display:none;}
+
+  .card-hd:hover{background:#f9fafb}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="logo">MUNI</div>
+    <div class="user">EN &nbsp;|&nbsp; Mgr. Markéta Pešová učo 236 65</div>
+  </div>
+  <nav class="nav">
+    <span class="active">STUDENT / MOJE PŘEDMĚTY</span>
+    <span>ZAČÁTEK SEMESTRU</span>
+    <span>VÝUKA</span>
+    <span>KONEC SEMESTRU</span>
+    <span>BĚHEM STUDIA</span>
+    <span>ZÁVĚR STUDIA</span>
+  </nav>
+  <div class="search">
+    <img alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E"/>
+    <input placeholder="Vyhledat v ISu">
+  </div>
+
+  <h1 class="section">Moje předměty</h1>
+
+  <div class="list" id="list"></div>
+
+  <script>
+    const SUBJECTS = [
+  {
+    "kod_predmetu": "SZ0001",
+    "nazev_predmetu": "Základy pedagogického myšlení",
+    "semestr": 1,
+    "vystupy_sebehodnoceni": [
+      "Porovnám tradiční a současné přístupy ke vzdělávání učitelů a uvedu příklady",
+      "Ověřím si své znalosti formou kvízu zaměřeného na školskou legislativu",
+      "Vypracuji volnou úvahu o ideálním učiteli /učitelce a pojmenuji jaké kompetence považuji v pedagogické profesi za klíčové",
+      "Uvedu konkrétní příklady jak naplňuji jednotlivé oblasti profesních kompetencí"
+    ],
+    "vystupy": [
+      {
+        "kod": "6.2a",
+        "popis": "Pracuji na utváření svého sebepojetí v roli učitele či učitelky tím, že pojmenovávám svá očekávání, obavy a potřeby a pracuji s nimi."
+      }
+    ],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0002",
+    "nazev_predmetu": "Úvod do kognitivní a sociální psychologie",
+    "semestr": 2,
+    "vystupy_sebehodnoceni": [
+      "Student vysvětlí základní psychologické procesy a jejich vliv na učení žáků",
+      "Student vytváří bezpečné a podpůrné prostředí pro učení",
+      "Student reflektuje vliv sociálních faktorů na učení a skupinovou dynamiku",
+      "Jádrový výstup: Dokážu propojit poznatky o vnímání, paměti, pozornosti a emocích s konkrétními výukovými situacemi"
+    ],
+    "vystupy": [
+      {
+        "kod": "3.1a",
+        "popis": "Projevuji zájem o žáky ve třídě."
+      },
+      {
+        "kod": "3.1b",
+        "popis": "Používám postupy a strategie, jimiž mezi mnou a žáky buduji důvěru."
+      },
+      {
+        "kod": "3.2b",
+        "popis": "Podporuji žáky ve spolupráci a vzájemné podpoře při učení."
+      }
+    ],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0003",
+    "nazev_predmetu": "Speciální a inkluzivní pedagogika",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Dokáže reflektovat vlastní postoje k diverzitě a inkluzi a zprostředkovat toto téma žákům",
+      "Zná základní komunikační pravidla při pedagogické práci s žáky se SVP",
+      "Dokáže plánovat výuku žáků se SVP s diferencovanými cíli a aktivitami a obhájit své volby z hlediska inkluzivních hodnot",
+      "Aplikuje strategie pro budování bezpečného a respektujícího prostředí pro všechny"
+    ],
+    "vystupy": [],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0004",
+    "nazev_predmetu": "Vývojová psychologie",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Orientovat se (orientuji se) ve východiscích současné vývojové psychologie, jejích specifických metodách a v principech psychického vývoje",
+      "Orientovat se v reprezentativních vývojových teoriích, které mají přesah do pedagogických disciplín nebo přispívají k porozumění fungování osobnosti ve škole i v dospělém věku",
+      "Prohloubit sebereflexi vlastního pojetí vývoje, potřeb a utváření prostředí příznivého pro vývoj ve škole",
+      "Rozumět specifikům jednotlivých stadií ontogeneze lidské psychiky, znát vývojové možnosti i typické problémy jednotlivých fází ontogeneze"
+    ],
+    "vystupy": [],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0005",
+    "nazev_predmetu": "Asistentská praxe/doučování a sebezkušenost ve škole a sebezkušenost",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Praxe doučování: 1/Samostatně sjednám kontrakt podpory dítěte (komunikuji se zákonnými zástupci a institucemi, stanovím si časové hranice podpory a pravidla spolupráce.2/Získávám vhled do podmínek pro učení se dětí (rozmanité sociokulturní i jazykové prostředí).3/Řeším nenadálé situace, reaguji flexibilně na momentální potřeby žáků a jejich zákonných zástupců.SEPP:1/Rozšiřuji uvědomění o svém prožívání, myšlení a jednání ve vztahu ke mně, druhým a praxi",
+      "2/Reflektuji své pocity, potřeby a osobní hranice v rámci osobního a profesního rozvoje.3/Na konkrétních příkladech popíšu, co může podpořit a co naopak narušit bezpečí a důvěru ve skupině.4/Rozvíjím empatii a přijímající postoj k sobě i k druhým lidem"
+    ],
+    "vystupy": [
+      {
+        "kod": "6.2",
+        "popis": "Plánuji a realizuji svůj profesní rozvoj"
+      }
+    ],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0006",
+    "nazev_predmetu": "Sebezkušenostní příprava na profesi I",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Prohloubené sebepoznání a sebereflexe: student si uvědomí nové skutečnosti o sobě samém a lépe rozpoznává své pocity, potřeby a hodnoty ￼",
+      "Rozvoj empatie a porozumění druhým: student si díky skupinovým aktivitám uvědomuje něco nového i o druhých lidech (spolužácích, žácích), lépe chápe perspektivu “toho druhého” a zlepšuje schopnost vcítit se do potřeb a pocitů ostatních – což je klíčové např",
+      "Při řešení konfliktů ve třídě",
+      "Zlepšení dovedností seberegulace a řešení náročných situací: prostřednictvím nácviku různých modelových situací (zejm"
+    ],
+    "vystupy": [],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0008",
+    "nazev_predmetu": "Sebezkušenostní příprava na profesi II",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Prohloubené sebepoznání a sebereflexe: student si uvědomí nové skutečnosti o sobě samém a lépe rozpoznává své pocity, potřeby a hodnoty ￼",
+      "Rozvoj empatie a porozumění druhým: student si díky skupinovým aktivitám uvědomuje něco nového i o druhých lidech (spolužácích, žácích), lépe chápe perspektivu “toho druhého” a zlepšuje schopnost vcítit se do potřeb a pocitů ostatních – což je klíčové např",
+      "Při řešení konfliktů ve třídě",
+      "Zlepšení dovedností seberegulace a řešení náročných situací: prostřednictvím nácviku různých modelových situací (zejm"
+    ],
+    "vystupy": [],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0009",
+    "nazev_predmetu": "Poznávání žáka",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Zdůvodním roli učitele/asistenta diagnostika a potřebu diagnostické činnosti v praxi",
+      "Vysvětlím základní pojmy (pedagogická diagnostika, diagnostikování, diagnóza, typy diagnostikování, přístupy v diagnostikování, diagnostická kompetence)",
+      "Vést studenty k pochopení smyslu pedagogické diagnostiky",
+      "Diagnostickou činnost v praxi realizuji v souladu s fázemi diagnostického procesu"
+    ],
+    "vystupy": [
+      {
+        "kod": "3.3a",
+        "popis": "Vedu žáky k efektivní organizaci práce, k osvojování strategií a návyků, které usnadňují učení."
+      },
+      {
+        "kod": "3.3b",
+        "popis": "Využívám vliv prostředí a přizpůspobuji prostorové uspořádání třídy pro podporu učení žáků."
+      },
+      {
+        "kod": "4.1b",
+        "popis": "Ověřuji průběžně naplnění výukových cílů a do procesu vyhodnocení cílů zapojuji i žáky."
+      }
+    ],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0010",
+    "nazev_predmetu": "Asistentská praxe/doučovací praxe",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Praxe doučování: 1/Samostatně sjednám kontrakt podpory dítěte (komunikuji se zákonnými zástupci a institucemi, stanovím si časové hranice podpory a pravidla spolupráce.2/Získávám vhled do podmínek pro učení se dětí (rozmanité sociokulturní i jazykové prostředí).3/Řeším nenadálé situace, reaguji flexibilně na momentální potřeby žáků a jejich zákonných zástupců"
+    ],
+    "vystupy": [],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0011",
+    "nazev_predmetu": "Podpora rozvoje nadání",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Vymezím pojmy nadání, rozvoj nadání, modely nadání, typologie nadaných",
+      "Znám postup při identifikaci nadání",
+      "Znám vhodné strategie pro výuku nadaných a umím vytvořit vhodné materiály",
+      "Využívám digitální nástroje a digitální prostředí pro podporu vzdělávánéí a rozvoj nadaných, reflektuji efektivitu použitých nástrojů§ a strategií"
+    ],
+    "vystupy": [],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0013",
+    "nazev_predmetu": "Komunikační strategie podporující učení",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Pojmenuji principy výukové komunikace (IRF struktura, dialogické vyučování, typologie dle bloomovy taxonomie, náležitosti zpětné vazby pro výuku - popisný jazyk, kritéria, formativní a sumativní hodnocení v komunikaci).2.Orientuji se v nástrojích a přístupech, které lze využít při řešení náročných výchovných situací s žáky",
+      "(NVC, Škola bez poražených, Way of Council - Poradní kruh).3",
+      "Nastavuji komunikační pravidla a využívám je v praxi.4.Použiji vybrané komunikační strategie (vedení rozhovoru, Já sdělení, aktivní naslouchání, 4P) při konkrétních situacích v rámci asistentské praxe a reflektuji jejich dopad.5.Použiji kriteriální zpětnou vazbu pro vlastní a vzájemné hodnocení a rozumím rozdílům mezi popisnou a hodnotící zpětnou vazbou"
+    ],
+    "vystupy": [
+      {
+        "kod": "6.2b",
+        "popis": "Stanovuji adekvátní cíle svého profesního rozvoje."
+      },
+      {
+        "kod": "6.2c",
+        "popis": "Reflektuji průběh výuky (případně i přípravu na výuku) s oporou o zpětnou vazbu provázejícího učitele."
+      },
+      {
+        "kod": "6.2d",
+        "popis": "Využívám zpětnou vazbu od žáků pro profesní rozvoj."
+      }
+    ],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0014",
+    "nazev_predmetu": "Oborová praxe",
+    "nazev_s_kodem": "SZ0014 Oborová praxe",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [],
+    "vystupy": [],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0015",
+    "nazev_predmetu": "Předmět - semestr",
+    "nazev_s_kodem": "SZ0015 Předmět - semestr",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [],
+    "vystupy": [],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  },
+  {
+    "kod_predmetu": "SZ0016",
+    "nazev_predmetu": "Bezpečné prostředí pro učení / Safe learning environment",
+    "nazev_s_kodem": "SZ0016 Bezpečné prostředí pro učení / Safe learning environment",
+    "semestr": 3,
+    "vystupy_sebehodnoceni": [
+      "Očekávaný výstup: Student pojmenuje a vysvětlí principy přístupů pro zvládání náročného chování a budování bezpečného prostředí (např",
+      "PBIS, restorativní praxe, SEL)",
+      "Jádrový výstup: Pojmenuji a vysvětlím základní principy přístupů pro zvládání náročného chování a budování bezpečného prostředí (např",
+      "Očekávaný výstup: Student navrhne a analyzuje použití vybraných přístupů pro zvládání náročného chování žáků a budování bezpečného prostředí pro učení na základě kazuistik"
+    ],
+    "vystupy": [
+      {
+        "kod": "3.1",
+        "popis": "Buduji prostředí důvěry"
+      }
+    ],
+    "checkbox": "yes",
+    "reflexe_ramovaci_otazka": "Stručně zdůvodni, jak si pracoval na těchto výstupech.",
+    "reflexe": "",
+    "reflexe_volitelna": true
+  }
+];
+
+    function initialsFrom(code) {
+      const letters = code.replace(/[^A-Z]/g,'').slice(0,2);
+      return letters || 'M';
+    }
+
+    function buildCard(subject, index, evalIndex, evalTotal) {
+      const card = document.createElement('section');
+      card.className = 'card';
+
+      const hd = document.createElement('div');
+      hd.className = 'card-hd';
+      hd.innerHTML = `
+        <div class="code">
+          <span class="badge">${initialsFrom(subject.kod_predmetu)}</span>
+          <span class="title">${subject.kod_predmetu} ${subject.nazev_predmetu || ''}</span>
+        </div>
+        <div class="chev">▾</div>
+      `;
+      card.appendChild(hd);
+
+      const bd = document.createElement('div');
+      bd.className = 'card-bd';
+      bd.innerHTML = `
+        <div class="row">
+          <div class="tile">Studijní materiály</div>
+          <div class="tile">Odevzdávárna</div>
+          <div class="tile">Studentské konzultace</div>
+        </div>
+        <div class="row" style="padding:10px 16px;">
+          <div class="tile disabled">Interaktivní osnova</div>
+          <div class="tile disabled">Poznámkové bloky</div>
+        </div>
+        <div class="quicklinks">
+          •&nbsp;<a href="#">Naplánovat studentskou konzultaci</a>
+          •&nbsp;<a href="#">Poskytovna</a>
+          •&nbsp;<a href="#">Katalog</a>
+          •&nbsp;<a href="#">Spolužáci</a>
+          •&nbsp;<a href="#" class="highlight">Výstupy pro sebehodnocení</a>
+        </div>
+      `;
+
+      // Výstupy
+      const outcomes = Array.isArray(subject.vystupy_sebehodnoceni) ? subject.vystupy_sebehodnoceni : [];
+      const evalWrap = document.createElement('div');
+      evalWrap.className = 'eval-wrap';
+      evalWrap.innerHTML = `
+        <div class="eval-hd">
+          <h2>Výstupy pro sebehodnocení</h2>
+          <div class="pager">Předměty ${evalIndex}/${evalTotal}</div>
+        </div>
+        <div class="eval-body"></div>
+      `;
+      const body = evalWrap.querySelector('.eval-body');
+
+      if (!outcomes.length) {
+        const p = document.createElement('p');
+        p.style.color = '#6b7280';
+        p.textContent = 'Pro tento předmět nejsou definovány výstupy pro sebehodnocení.';
+        body.appendChild(p);
+      } else {
+        outcomes.forEach((txt, i) => {
+          const block = document.createElement('div');
+          block.className = 'outcome';
+          block.innerHTML = `
+            <h3>${txt}</h3>
+            <div class="scale">
+              <div class="label-left">Ještě nezvládám</div>
+              <div class="track">
+                <input type="range" class="slider" min="0" max="100" value="${i===2?60:0}" step="1">
+                <div class="ticks"><span></span><span></span><span></span></div>
+              </div>
+              <div class="label-100">100&nbsp;%</div>
+              <div class="label-right">Zvládám</div>
+            </div>
+            <div class="tick-labels"><span>0&nbsp;%</span><span>50&nbsp;%</span><span>100&nbsp;%</span></div>
+            <div class="justify-label">Zdůvodnění <span style="color:#ef4444">*</span></div>
+            <textarea class="justify" placeholder=""></textarea>
+            <div class="upload"><label>
+              <span>📎</span> Přiložit soubor
+              <input type="file">
+            </label></div>
+          `;
+          body.appendChild(block);
+        });
+      }
+      bd.appendChild(evalWrap);
+      card.appendChild(bd);
+
+      hd.addEventListener('click', () => { card.classList.toggle('open'); });
+      return card;
+    }
+
+    const list = document.getElementById('list');
+    const subjects = SUBJECTS;
+    const evalSubjects = subjects.filter(s => Array.isArray(s.vystupy_sebehodnoceni) && s.vystupy_sebehodnoceni.length);
+    let evalCounter = 0;
+
+    subjects.forEach((s, idx) => {
+      const isEval = Array.isArray(s.vystupy_sebehodnoceni) && s.vystupy_sebehodnoceni.length;
+      if (isEval) evalCounter += 1;
+      const card = buildCard(s, idx, isEval ? evalCounter : '-', evalSubjects.length || '-');
+      list.appendChild(card);
+    });
+  </script>
+</body>
+</html>
