@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mapa učení pro gympláky (15–19)</title>
+  <meta name="description" content="Jednoduchý rozcestník: jak může gymplák (15–19) mapovat svůj učební proces – plán, znalosti a dovednosti, důkazy učení (portfolio) – a jaké nástroje se na to hodí." />
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#fafafa;
+      --panel2:#f4f5f7;
+      --text:#111827;
+      --muted:#4b5563;
+      --muted2:#6b7280;
+      --line:#e5e7eb;
+      --accent:#2563eb;
+      --shadow: 0 10px 25px rgba(0,0,0,.06);
+      --radius:16px;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    html,body{background:var(--bg); color:var(--text); font-family:var(--sans); margin:0;}
+    a{color:var(--accent); text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    .wrap{max-width:1020px; margin:0 auto; padding:26px 18px 62px;}
+    header{
+      padding:22px 18px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:linear-gradient(180deg, #fff, #fbfbfb);
+      box-shadow: var(--shadow);
+    }
+    h1{
+      margin:0 0 8px;
+      font-size: clamp(22px, 3.2vw, 34px);
+      line-height:1.1;
+      letter-spacing:-.02em;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      max-width: 78ch;
+      line-height:1.6;
+      font-size: 16px;
+    }
+    nav{
+      margin-top:14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    nav a{
+      display:inline-flex;
+      align-items:center;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fff;
+      color:var(--muted);
+      font-size:13px;
+    }
+    nav a:hover{border-color:#cbd5e1; text-decoration:none; color:var(--text);}
+    section{margin-top:22px;}
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background:#fff;
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+    h2{margin:0 0 10px; font-size:18px; letter-spacing:-.01em;}
+    h3{margin:0 0 8px; font-size:15px;}
+    .muted{color:var(--muted);}
+    .small{color:var(--muted2); font-size:13px; line-height:1.65;}
+    ul{margin:10px 0 0 18px; padding:0; line-height:1.7;}
+    li{margin:6px 0;}
+    .grid{display:grid; gap:14px;}
+    @media (min-width:980px){ .grid.cols2{grid-template-columns: 1fr 1fr;} }
+    .hr{height:1px; background:var(--line); margin:16px 0;}
+    .callout{
+      border:1px dashed #cbd5e1;
+      border-radius: var(--radius);
+      background: #fbfdff;
+      padding:14px 14px 12px;
+    }
+    .exampleGrid{
+      display:grid;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (min-width:980px){
+      .exampleGrid{grid-template-columns: 1fr 1fr 1fr;}
+    }
+    .exampleCol{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      padding:12px;
+    }
+    .exampleCol h3{margin:0 0 8px; font-size:14px;}
+    .exampleCol ul{margin:8px 0 0 18px;}
+    .chipRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+    .chip{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      background: var(--panel2);
+      border:1px solid var(--line);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    details{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background:#fff;
+      padding:12px 12px 10px;
+    }
+    details + details{margin-top:10px;}
+    summary{
+      cursor:pointer;
+      list-style:none;
+      font-weight:650;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    summary::-webkit-details-marker{display:none;}
+    .tag{
+      font-size:12px;
+      padding:3px 8px;
+      border-radius:999px;
+      background: var(--panel2);
+      border:1px solid var(--line);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .links{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;}
+    .links a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fff;
+      font-size:13px;
+    }
+    .links a:hover{border-color:#cbd5e1; text-decoration:none;}
+    footer{margin-top:28px; color:var(--muted2); font-size:12px; line-height:1.75;}
+    code{font-family:var(--mono); font-size:12.5px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header id="top">
+      <h1>Mapa učení pro gympláky (15–19)</h1>
+      <p class="sub">
+        Jedna jednoduchá stránka (nebo tabule), kde je vidět:
+        <b>co student dělá teď</b>, <b>v čem roste</b> (znalosti i dovednosti) a <b>čím to dokládá</b> (portfolio).
+        Níže je konkrétní příklad a potom přehled nástrojů.
+      </p>
+      <nav>
+        <a href="#co-to-ma-umet">Co to má umět</a>
+        <a href="#priklad">Příklad ze života studenta</a>
+        <a href="#nastroje">Nástroje</a>
+        <a href="#rychly-start">Rychlý start</a>
+      </nav>
+    </header>
+
+    <section id="co-to-ma-umet">
+      <div class="card">
+        <h2>Co to má umět</h2>
+        <ul>
+          <li><b>Práce s plánem:</b> student ví, co dělá teď (týden / sprint) a proč.</li>
+          <li><b>Mapování procesu učení:</b> vidět postup v čase, ne jen „splněno/nesplněno“.</li>
+          <li><b>Formativně:</b> pravidelná reflexe, feedforward, evidence („důkazy učení“).</li>
+          <li><b>Napojitelné na ŠVP:</b> ne jako diktát, ale jako „tagy“/kritéria pro orientaci.</li>
+          <li><b>Univerzální:</b> použitelné ve svobodné škole (mimo školské šablony).</li>
+        </ul>
+
+        <div class="hr"></div>
+
+        <div class="callout small">
+          <b>Slovníček:</b>
+          <b>Znalost</b> = tomu rozumím („fotosyntéza“, „funkce“, „příčiny revoluce“). ·
+          <b>Dovednost</b> = to umím udělat („argumentovat v textu“, „pracovat s daty“, „prezentovat“). ·
+          <b>Důkaz učení</b> = ukázka práce + 1–2 věty, co jsem se naučil a co zkusím příště.
+        </div>
+      </div>
+    </section>
+
+    <section id="priklad">
+      <div class="grid cols2">
+        <div class="card">
+          <h2>Příklad ze života studenta</h2>
+          <p class="muted" style="margin:0; line-height:1.7;">
+            Studentka <b>Klára (17)</b> si vede jednu stránku „Mapa učení“. Každý týden do ní udělá čtyři malé kroky:
+          </p>
+
+          <div class="hr"></div>
+
+          <h3>1) Neděle večer (10 minut): plán týdne</h3>
+          <ul>
+            <li>Napíše si <b>2–4 konkrétní věci</b>, na kterých chce pracovat.</li>
+            <li>Ke každé věci přidá jednu větu <b>proč</b> (co chce posílit / kvůli čemu).</li>
+          </ul>
+
+          <h3 style="margin-top:12px;">2) Během týdne (průběžně): ukládání důkazů</h3>
+          <ul>
+            <li>Ke každému většímu výstupu uloží odkaz (dokument, fotky, video, prezentace…).</li>
+            <li>Přidá <b>2 věty</b>: „co jsem se naučila“ a „co zkusím příště“.</li>
+          </ul>
+
+          <h3 style="margin-top:12px;">3) Pátek (10 minut): reflexe</h3>
+          <ul>
+            <li>Co se povedlo?</li>
+            <li>Co bylo těžké a proč?</li>
+            <li>Jaký je další malý krok na příští týden?</li>
+          </ul>
+
+          <h3 style="margin-top:12px;">4) Jednou za měsíc (30–45 minut): rozhovor s mentorem</h3>
+          <ul>
+            <li>Vyberou 2–3 věci, které mají největší smysl posílit.</li>
+            <li>Domluví se na konkrétním „příště udělám…“ (to je feedforward).</li>
+          </ul>
+
+          <div class="hr"></div>
+
+          <div class="callout small">
+            <b>Jednoduchá škála růstu (0–4):</b>
+            0 neznám · 1 rozumím s pomocí · 2 zvládnu sám · 3 použiju v projektu · 4 vysvětlím druhému
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Jak vypadá její „Mapa učení“ (vyplněný příklad)</h2>
+
+          <div class="exampleGrid" aria-label="Vyplněný příklad mapy učení">
+            <div class="exampleCol">
+              <h3>Teď (týden)</h3>
+              <ul>
+                <li><b>Esej (dějepis):</b> „Proč lidé věří dezinformacím“ – chci psát jasněji</li>
+                <li><b>Matematika:</b> funkce a grafy – kvůli projektu „Model růstu“</li>
+                <li><b>Projekt:</b> rozhovor se správcem parku – sběr dat do práce</li>
+                <li><b>Reflexe:</b> pátek 10 min</li>
+              </ul>
+              <div class="chipRow">
+                <span class="chip">krátké</span>
+                <span class="chip">konkrétní</span>
+                <span class="chip">s „proč“</span>
+              </div>
+            </div>
+
+            <div class="exampleCol">
+              <h3>Růst (znalosti + dovednosti)</h3>
+              <ul>
+                <li><b>Znalost:</b> Funkce a grafy — <b>3/4</b> → další krok: 10 příkladů + vysvětlit spolužákovi</li>
+                <li><b>Znalost:</b> Dezinformace a argumenty — <b>2/4</b> → další krok: najít 2 spolehlivé zdroje</li>
+                <li><b>Dovednost:</b> Argumentace v textu — <b>2/4</b> → další krok: přidat protiargument</li>
+                <li><b>Dovednost:</b> Práce s daty — <b>1/4</b> → další krok: udělat 1 jednoduchý graf</li>
+              </ul>
+              <div class="chipRow">
+                <span class="chip">znalosti</span>
+                <span class="chip">dovednosti</span>
+                <span class="chip">další krok</span>
+              </div>
+            </div>
+
+            <div class="exampleCol">
+              <h3>Důkazy učení (portfolio)</h3>
+              <ul>
+                <li><b>Esej v Google Docs</b> + 2 věty reflexe („příště kratší věty, přidám zdroj“)</li>
+                <li><b>Sešit k funkcím</b> (fotky / PDF) + „kde jsem se zasekl“</li>
+                <li><b>Tabulka s daty</b> + první graf</li>
+                <li><b>Prezentace</b> (5 slidů) – shrnutí výsledků</li>
+              </ul>
+              <div class="chipRow">
+                <span class="chip">odkazy</span>
+                <span class="chip">ukázky práce</span>
+                <span class="chip">krátká reflexe</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <p class="small" style="margin:0;">
+            Pokud potřebuje škola vazbu na ŠVP, Klára u vybraných položek přidá 1–3 štítky (např. „ŠVP: ČJ – práce s textem“).
+            V běžném týdnu to ale nemusí řešit – důležitý je rytmus: plán → práce → důkaz → reflexe.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="nastroje">
+      <div class="card">
+        <h2>Nástroje</h2>
+        <p class="muted" style="margin:0 0 12px; line-height:1.7;">
+          Mapa učení jde dělat na papíře i digitálně. Níže jsou digitální nástroje, které se osvědčují.
+          U každého je krátký příklad, jak by ho mohl použít konkrétní student.
+        </p>
+
+        <details>
+          <summary>Notion <span class="tag">vše na jednom místě</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> stránka „Mapa učení“ + databáze (plán, znalosti/dovednosti, důkazy).<br/>
+            <b>Příklad použití:</b> student má jeden „dashboard“, kde vidí týdenní plán, tabulku růstu (úroveň 0–4) a seznam důkazů s odkazy.<br/>
+            <div class="links">
+              <a href="https://www.notion.so/" target="_blank" rel="noopener">Notion</a>
+              <a href="https://www.notion.com/templates/student-study-planner" target="_blank" rel="noopener">Šablona: Study Planner</a>
+              <a href="https://www.notion.com/templates/notion-student-dashboard" target="_blank" rel="noopener">Šablona: Student Dashboard</a>
+              <a href="https://www.notion.com/templates/course-tracker" target="_blank" rel="noopener">Šablona: Course Tracker</a>
+              <a href="https://www.notion.com/templates/online-courses-tracker" target="_blank" rel="noopener">Šablona: Online courses tracker</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Google Drive (Dokumenty, Tabulky, Prezentace) <span class="tag">jednoduché a dostupné</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> „bez zavádění nové aplikace“ – složka pro učení + 1 dokument na plán + 1 tabulka na růst + složky na důkazy.<br/>
+            <b>Příklad použití:</b> student má v Drive složku „Moje učení“, v ní dokument „Týdenní plán“ a tabulku „Znalosti a dovednosti“ (úroveň + další krok).<br/>
+            <div class="links">
+              <a href="https://workspace.google.com/" target="_blank" rel="noopener">Google Workspace</a>
+              <a href="https://drive.google.com/" target="_blank" rel="noopener">Google Drive</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Google Sites <span class="tag">portfolio jako web</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> veřejná (nebo sdílená) stránka, kde je „to nejlepší“: projekty, ukázky práce, reflexe.<br/>
+            <b>Příklad použití:</b> student má stránku „Moje portfolio“: 6 projektů za rok + krátké popisy + odkazy na důkazy. Ideální pro rodiče nebo při přechodu na další školu/brigádu.<br/>
+            <div class="links">
+              <a href="https://sites.google.com/" target="_blank" rel="noopener">Google Sites</a>
+              <a href="https://kisk.phil.muni.cz/studenti/digitalni-portfolio" target="_blank" rel="noopener">Inspirace: Digitální portfolio (KISK)</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>NotebookLM (Google) <span class="tag">práce se zdroji</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> když student pracuje s PDF, články a poznámkami – potřebuje rychle pochopit obsah a vytáhnout hlavní myšlenky.<br/>
+            <b>Příklad použití:</b> student nahraje zdroje k projektu, nechá si udělat osnovu, otázky k pochopení a krátké shrnutí. Výsledek pak vloží do své mapy učení jako „důkaz“ a reflexi.<br/>
+            <div class="links">
+              <a href="https://notebooklm.google.com/" target="_blank" rel="noopener">NotebookLM</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>FigJam (Figma) <span class="tag">vizuální mapa</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> tabule pro mapy, šipky, lístečky, obrázky a týmovou práci.<br/>
+            <b>Příklad použití:</b> student si udělá mapu projektu „od otázky → přes zdroje → po výstup“. Do mapy lepí odkazy na dokumenty a důkazy. Na konci pololetí z toho udělá přehled pro obhajobu.<br/>
+            <div class="links">
+              <a href="https://www.figma.com/figjam/" target="_blank" rel="noopener">FigJam</a>
+              <a href="https://www.figma.com/templates/" target="_blank" rel="noopener">Šablony ve Figmě</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Miro <span class="tag">vizuální mapa + skupiny</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> podobně jako FigJam – velká tabule pro projekty, retrospektivy, plánování a mapy témat.<br/>
+            <b>Příklad použití:</b> skupina studentů má jednu tabuli pro společný projekt: úkoly, zodpovědnosti, průběžné poznámky, výstupy a reflexe na konci týdne.<br/>
+            <div class="links">
+              <a href="https://miro.com/" target="_blank" rel="noopener">Miro</a>
+              <a href="https://miro.com/templates/" target="_blank" rel="noopener">Miro Templates</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Obsidian <span class="tag">poznámky a propojování (offline)</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> poznámky jako soubory v počítači, mezi nimi odkazy (dobré pro dlouhodobé učení).<br/>
+            <b>Příklad použití:</b> student má stránku „Mapa obsahu“ jako rozcestník (témata) a u každého tématu poznámky + odkazy na projekty. Do mapy učení pak odkazuje na konkrétní poznámky jako důkazy.<br/>
+            <div class="links">
+              <a href="https://obsidian.md/" target="_blank" rel="noopener">Obsidian</a>
+              <a href="https://help.obsidian.md/" target="_blank" rel="noopener">Návody</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Logseq <span class="tag">deník + poznámky + reflexe</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> denní záznamy, poznámky a odkazy; pro lidi, co rádi pracují „po dnech“.<br/>
+            <b>Příklad použití:</b> student si píše krátký denní záznam („co jsem dělal“) a jednou týdně z toho udělá shrnutí do mapy učení (co je pokrok + co dál).<br/>
+            <div class="links">
+              <a href="https://logseq.com/" target="_blank" rel="noopener">Logseq</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Anki <span class="tag">opakování (kartičky)</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> když je potřeba pravidelně opakovat (jazyky, pojmy, vzorce). Systém sám připomíná, co dnes opakovat.<br/>
+            <b>Příklad použití:</b> student si z tématu „chemie – reakce“ udělá 30 kartiček (otázka → odpověď). Každý den 10 minut opakuje.<br/>
+            <div class="links">
+              <a href="https://apps.ankiweb.net/" target="_blank" rel="noopener">Anki</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>RemNote <span class="tag">poznámky + kartičky</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> poznámky a opakování v jedné aplikaci (z poznámek rovnou děláte kartičky).<br/>
+            <b>Příklad použití:</b> student si píše poznámky z biologie a vyznačuje věty, které se automaticky mění na kartičky k opakování.<br/>
+            <div class="links">
+              <a href="https://www.remnote.com/" target="_blank" rel="noopener">RemNote</a>
+              <a href="https://help.remnote.com/" target="_blank" rel="noopener">Návody</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Zotero <span class="tag">zdroje a citace</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> sběr článků/PDF a jednoduché citace (užitečné pro seminárky a delší texty).<br/>
+            <b>Příklad použití:</b> student si uloží 12 článků k tématu, dělá si anotace a pak z toho snadno vytáhne bibliografii do práce.<br/>
+            <div class="links">
+              <a href="https://www.zotero.org/" target="_blank" rel="noopener">Zotero</a>
+              <a href="https://www.zotero.org/download/" target="_blank" rel="noopener">Stažení</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Readwise <span class="tag">výpisky z čtení</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> sběr zvýraznění z knih/článků a pravidelné „znovu-připomenutí“ (review).<br/>
+            <b>Příklad použití:</b> student čte článek, zvýrazňuje klíčové pasáže a ty se mu pak vrací v krátkých denních přehledech; nejlepší výpisky přenese do poznámek nebo do mapy učení.<br/>
+            <div class="links">
+              <a href="https://readwise.io/" target="_blank" rel="noopener">Readwise</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Trello / Todoist / Google Kalendář <span class="tag">termíny a úkoly</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> když student potřebuje hlavně „nezapomenout“ a rozdělit práci do kroků.<br/>
+            <b>Příklad použití:</b> student má tabuli „Můj týden“ se sloupci: Plánuji → Dělám → Hotovo; u každé karty je odkaz na důkaz (dokument, fotka, prezentace).<br/>
+            <div class="links">
+              <a href="https://trello.com/" target="_blank" rel="noopener">Trello</a>
+              <a href="https://todoist.com/" target="_blank" rel="noopener">Todoist</a>
+              <a href="https://calendar.google.com/" target="_blank" rel="noopener">Google Kalendář</a>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Inspirace: jak může vypadat „růst v čase“ <span class="tag">ukázky přehledů</span></summary>
+          <div class="small" style="margin-top:10px;">
+            <b>K čemu:</b> inspirace, jak zobrazit pokrok a cíle (grafy, přehledy, růst).<br/>
+            <b>Příklad použití:</b> škola nebo mentor si z toho vezme nápad na jednoduchý přehled „kde jsem byl / kde jsem teď / co příště“.<br/>
+            <div class="links">
+              <a href="https://www.nwea.org/tour-map-growth/" target="_blank" rel="noopener">NWEA: MAP Growth (ukázka)</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="rychly-start">
+      <div class="card">
+        <h2>Rychlý start (nejjednodušší varianta)</h2>
+        <p class="muted" style="margin:0 0 12px; line-height:1.7;">
+          Nejrychlejší začátek bez složitostí:
+        </p>
+        <ol style="margin:0 0 0 18px; line-height:1.85;">
+          <li>Vyberte 1 místo, kde to student bude mít (Notion <i>nebo</i> Google).</li>
+          <li>Založte 1 stránku „Mapa učení“ se třemi bloky: <b>Teď</b> / <b>Růst</b> / <b>Důkazy</b>.</li>
+          <li>Každý týden: 10 min plán + 10 min reflexe + přidat aspoň 1 důkaz.</li>
+          <li>Jednou měsíčně: rozhovor s mentorem (co posílit, co zjednodušit, co je další krok).</li>
+        </ol>
+
+        <div class="hr"></div>
+
+        <p class="small" style="margin:0;">
+          Nejsilnější část celého systému je rytmus a reflexe. Nástroje jsou jen obal.
+        </p>
+
+        <div class="links" style="margin-top:12px;">
+          <a href="#top">Zpět nahoru ↑</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="hr"></div>
+      Když je toho moc: zjednodušit. Mapa učení může být klidně jen jeden dokument se třemi bloky.
+      Důležité je, aby student dokázal říct: <b>co teď</b> · <b>v čem rostu</b> · <b>co to dokládá</b>.
+    </footer>
+  </div>
+</body>
+</html>
